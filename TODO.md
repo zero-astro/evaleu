@@ -32,12 +32,13 @@
 
 ## New Website Design
 
-- [ ] **Phase 1: Project scaffolding**
-  - [ ] Remove existing `site/` directory (old HTML + Chart.js approach)
-  - [ ] Initialize SvelteKit project with Vite (`npm create svelte@latest site -- --template minimal --types typescript`)
-  - [ ] Configure TypeScript, ESLint, Prettier
-  - [ ] Set up `site/package.json`, `vite.config.ts`, `svelte.config.js`
-  - [ ] Add `.gitignore` entries for node_modules and build artifacts
+- [x] **Phase 1: Project scaffolding** ✅
+  - [x] Remove existing `site/` directory (old HTML + Chart.js approach)
+  - [x] Initialize SvelteKit project with Vite
+  - [x] Configure TypeScript, ESLint, Prettier
+  - [x] Set up `site/package.json`, `vite.config.ts`, `svelte.config.js`
+  - [x] Add `.gitignore` entries for node_modules and build artifacts
+  - [x] Build verified: `npm run build` → outputs to `build/`
 
 - [ ] **Phase 2: Data pipeline**
   - [ ] Keep existing Python CLI (`evaleu.py`) — it generates `summary.json` and `data.json`

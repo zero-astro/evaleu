@@ -1,0 +1,11 @@
+# SvelteKit
+node_modules
+.svelte-kit
+build
+dist
+
+# Local
+*.local
+
+# Logs
+logs
