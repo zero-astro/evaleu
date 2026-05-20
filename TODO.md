@@ -30,9 +30,46 @@
 - [ ] **Other candidate benchmark from discussion**
   - Candidate: `bl2mp`
 
-## Integration Planning (no implementation yet)
+## New Website Design
 
-- [ ] Define per-benchmark adapter requirements (format, prompt style, scoring).
-- [ ] Define evaluation order for incremental rollout (start with MMLU EU, then high-impact tasks).
-- [ ] Add acceptance criteria for each new benchmark before publishing to site.
-- [ ] Decide which benchmarks are shown in public leaderboard vs experimental section.
+- [ ] **Phase 1: Project scaffolding**
+  - [ ] Remove existing `site/` directory (old HTML + Chart.js approach)
+  - [ ] Initialize SvelteKit project with Vite (`npm create svelte@latest site -- --template minimal --types typescript`)
+  - [ ] Configure TypeScript, ESLint, Prettier
+  - [ ] Set up `site/package.json`, `vite.config.ts`, `svelte.config.js`
+  - [ ] Add `.gitignore` entries for node_modules and build artifacts
+
+- [ ] **Phase 2: Data pipeline**
+  - [ ] Keep existing Python CLI (`evaleu.py`) — it generates `summary.json` and `data.json`
+  - [ ] Create a new Python script (or extend `build_site_data.py`) that outputs Svelte-compatible JSON
+  - [ ] Ensure the build step reads `summary.json` → produces `site/src/lib/data/summary.ts` (typed TS module)
+  - [ ] Add npm script: `npm run build-data` to regenerate typed data from Python output
+
+- [ ] **Phase 3: Core components**
+  - [ ] `Leaderboard.svelte` — interactive table with sorting, filtering by family, search
+  - [ ] `ScoreBar.svelte` — animated bar chart showing overall accuracy (0 → value animation)
+  - [ ] `RadarPlot.svelte` — radar/spider chart per model using D3.js or Recharts
+  - [ ] `TimelineChart.svelte` — scatter plot of release date vs accuracy
+  - [ ] `ComparisonTool.svelte` — side-by-side comparison selector (pick 2-4 models)
+
+- [ ] **Phase 4: UI/UX polish**
+  - [ ] Dark/light mode toggle with localStorage persistence
+  - [ ] Glassmorphism card design system (CSS variables, blur effects)
+  - [ ] Color-coded model families (Core = blue, BasqueGLUE = green, LatxaEvalSuite = purple)
+  - [ ] Smooth transitions and hover micro-interactions
+  - [ ] Responsive mobile-first layout
+
+- [ ] **Phase 5: Build & deploy**
+  - [ ] Configure SvelteKit static export (`adapter-static`)
+  - [ ] Create GitHub Actions workflow:
+    - Step 1: Run `uv run evaleu.py eval --model <new-model>` (manual trigger, not auto)
+    - Step 2: Run `uv run evaleu.py summarize && uv run evaleu.py build`
+    - Step 3: Run `npm install && npm run build-data && npm run build`
+    - Step 4: Deploy to gh-pages
+  - [ ] Document the workflow in README.md
+
+- [ ] **Phase 6: Advanced features (nice-to-have)**
+  - [ ] CSV/JSON export of leaderboard data
+  - [ ] Bookmarkable URLs for filtered/sorted views
+  - [ ] Per-benchmark drill-down view
+  - [ ] Model detail modal with metadata and release info
