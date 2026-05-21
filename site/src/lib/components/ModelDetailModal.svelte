@@ -18,7 +18,7 @@
 
 {#if isOpen && model}
 	<div class="modal-overlay" onclick={() => model = null}>
-		<div class="modal-content glass-card" onclick={(e) => e.stopPropagation()}>
+		<div class="modal-content" onclick={(e) => e.stopPropagation()}>
 			<!-- Header -->
 			<div class="modal-header">
 				<h2>{model.displayName}</h2>
@@ -131,6 +131,17 @@
 		overflow-y: auto;
 		padding: 2rem;
 		animation: slideUp 0.3s ease;
+		background: #ffffff;
+		color: var(--text);
+		border-radius: 16px;
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		border: 1px solid var(--border);
+	}
+
+	/* Dark mode modal background */
+	:global(.dark) .modal-content {
+		background: #1e1e32;
+		color: var(--text);
 	}
 
 	@keyframes slideUp {
