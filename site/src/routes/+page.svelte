@@ -3,12 +3,10 @@
 	import { benchmarks } from '$lib/data/benchmarks';
 	import Leaderboard from '$lib/components/Leaderboard.svelte';
 	import ScoreBar from '$lib/components/ScoreBar.svelte';
-	import RadarPlot from '$lib/components/RadarPlot.svelte';
 	import TimelineChart from '$lib/components/TimelineChart.svelte';
 	import ComparisonTool from '$lib/components/ComparisonTool.svelte';
 	import ExportButton from '$lib/components/ExportButton.svelte';
 	import ModelDetailModal from '$lib/components/ModelDetailModal.svelte';
-	import BenchmarkDrilldown from '$lib/components/BenchmarkDrilldown.svelte';
 	import { onMount } from 'svelte';
 
 	const published = models.filter((m) => m.siteVisibility === 'published');
@@ -95,23 +93,7 @@
 		<ComparisonTool {models} />
 	</section>
 
-	<!-- Radar plots only -->
-	<section class="section glass-card">
-		<div class="card-header"><h2>📊 Benchmark Breakdown &amp; Trends</h2></div>
-		<div class="charts-grid">
-			{#each published.slice(0, 4) as model}
-				<RadarPlot model={model} />
-			{/each}
-		</div>
-	</section>
-
-	<!-- Benchmark Drill-Down -->
-	<section class="section glass-card">
-		<div class="card-header"><h2>🔍 Per-Benchmark Drill-Down</h2></div>
-		<BenchmarkDrilldown {models} {benchmarks} />
-	</section>
-
-	<!-- Model Detail Modal -->
+		<!-- Model Detail Modal -->
 	{#if selectedModel}
 		<ModelDetailModal model={selectedModel} benchmarks={benchmarks} onClose={() => (selectedModel = null)} />
 	{/if}
@@ -203,16 +185,8 @@
 		margin-bottom: 1rem;
 	}
 
-	.charts-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-		gap: 1.5rem;
-		margin-bottom: 2rem;
-	}
-
 	@media (max-width: 640px) {
 		.hero h1 { font-size: 2rem; }
-		.charts-grid { grid-template-columns: 1fr; }
 		.theme-toggle { top: 0.5rem; right: 0.5rem; width: 38px; height: 38px; font-size: 1.1rem; }
 	}
 
@@ -250,10 +224,5 @@
 		--shadow-hover: rgba(116, 185, 255, 0.2);
 	}
 
-	/* Dark theme overrides for components */
 
-	:root.dark .comp-table-wrap { background: var(--card-bg); box-shadow: 0 2px 12px var(--shadow); }
-	:root.dark .comp-table thead th { background: rgba(255,255,255,0.05); color: var(--text); }
-
-	:root.dark .dd-selector select { background: var(--card-bg); color: var(--text); border-color: var(--border); }
 </style>
