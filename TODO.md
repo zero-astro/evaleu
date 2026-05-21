@@ -70,7 +70,32 @@
     - Optionally rebuilds data from `summary.json` if present in repo
   - [x] Document the workflow in README.md
 
-- [ ] **Phase 6: Advanced features (nice-to-have)**
+- [x] **Phase 6: Testing — New Website Design** ✅
+  - [x] Install test framework (Playwright E2E + Vitest unit)
+  - [x] **Data integrity tests:**
+    - [x] `build_site_data.py` output matches `summary.json` structure
+    - [x] Generated `models.ts` has correct TypeScript types
+    - [x] Generated `benchmarks.ts` lists all benchmarks from summary
+    - [x] Published vs draft visibility filtering works correctly
+  - [x] **Component unit tests (Vitest):**
+    - [x] Leaderboard — sorting by any column, family filter, text search
+    - [x] ScoreBar — renders correct percentage and tier color
+    - [x] RadarPlot — renders with model data, no crashes on empty data
+    - [x] TimelineChart — scatter plot renders correctly
+    - [x] ComparisonTool — selection logic (2-4 models max), comparison table rendering
+  - [x] **E2E tests (Playwright):**
+    - [x] Page loads and all sections render without errors
+    - [x] Dark/light theme toggle persists via localStorage
+    - [x] Leaderboard sorting changes column order visually
+    - [x] Family filter dropdown filters rows correctly
+    - [x] Search input filters leaderboard rows by model name/family
+    - [x] ComparisonTool allows selecting 2-4 models and shows comparison table
+    - [x] Responsive layout adapts on mobile viewport (640px breakpoint)
+    - [x] Build produces clean output with no console errors
+  - [x] Add `npm test` script to site/package.json
+  - [x] Document testing workflow in README.md
+
+- [ ] **Phase 7: Advanced features (nice-to-have)**
   - [ ] CSV/JSON export of leaderboard data
   - [ ] Bookmarkable URLs for filtered/sorted views
   - [ ] Per-benchmark drill-down view
