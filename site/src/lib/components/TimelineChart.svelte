@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { ModelRecord } from '$lib/data/models';
 
 	let { models }: { models: ModelRecord[] } = $props();
@@ -13,6 +14,7 @@
 	};
 
 	let chartDiv: HTMLDivElement | null = $state(null);
+	let plotlyInstance: any = $state(null);
 
 	const scatterData = $derived(
 		models
@@ -35,9 +37,7 @@
 			}>,
 	);
 
-	let plotlyInstance: any = $state(null);
-
-	$effect(() => {
+	function renderChart(dark: boolean) {
 		if (!chartDiv || scatterData.length === 0) return;
 
 		const traces = Object.entries(familyColors).map(([family, color]) => {
@@ -50,7 +50,7 @@
 				marker: {
 					size: 12,
 					color: color,
-					line: { width: 2, color: '#ffffff' },
+					line: { width: 2, color: dark ? '#1e1e32' : '#ffffff' },
 				},
 				name: family,
 				type: 'scatter',
@@ -58,7 +58,6 @@
 			};
 		});
 
-		const dark = document.documentElement.classList.contains('dark');
 		const layout = {
 			xaxis: {
 				title: { text: 'Release Date', standoff: 10 },
@@ -88,11 +87,7 @@
 			},
 		};
 
-		const config = {
-			responsive: true,
-			displayModeBar: false,
-			scrollZoom: true,
-		};
+		const config = { responsive: true, displayModeBar: false, scrollZoom: true };
 
 		import('plotly.js-dist-min').then((Plotly) => {
 			if (plotlyInstance) {
@@ -103,9 +98,13 @@
 				});
 			}
 		}).catch(() => {
-			// Fallback to SVG if Plotly fails to load
 			console.warn('Plotly.js failed to load');
 		});
+	}
+
+	$effect(() => {
+		const dark = document.documentElement.classList.contains('dark');
+		renderChart(dark);
 
 		return () => {
 			if (chartDiv && plotlyInstance) {
@@ -114,6 +113,22 @@
 				}).catch(() => {});
 			}
 		};
+	});
+
+	// Watch for theme toggle via MutationObserver on documentElement classList
+	onMount(() => {
+		const observer = new MutationObserver((mutations) => {
+			for (const m of mutations) {
+				if (m.attributeName === 'class') {
+					const dark = document.documentElement.classList.contains('dark');
+					renderChart(dark);
+				}
+			}
+		});
+
+		observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+		return () => observer.disconnect();
 	});
 </script>
 
