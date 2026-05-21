@@ -83,16 +83,16 @@
 		<Leaderboard {models} {benchmarks} onModelClick={handleModelClick} />
 	</section>
 
-	<!-- Comparison tool -->
-	<section class="section glass-card">
-		<div class="card-header"><h2>⚔️ Model Comparison</h2></div>
-		<ComparisonTool {models} />
-	</section>
-
 	<!-- Evolution over time -->
 	<section class="section glass-card">
 		<div class="card-header"><h2>📈 Evolution Over Time</h2></div>
 		<TimelineChart models={published} />
+	</section>
+
+	<!-- Comparison tool -->
+	<section class="section glass-card">
+		<div class="card-header"><h2>⚔️ Model Comparison</h2></div>
+		<ComparisonTool {models} />
 	</section>
 
 	<!-- Radar plots only -->
