@@ -6,12 +6,15 @@
 	import RadarPlot from '$lib/components/RadarPlot.svelte';
 	import TimelineChart from '$lib/components/TimelineChart.svelte';
 	import ComparisonTool from '$lib/components/ComparisonTool.svelte';
+	import { onMount } from 'svelte';
 
 	const published = models.filter((m) => m.siteVisibility === 'published');
 	const topModel = [...published].sort((a, b) => b.overallMean - a.overallMean)[0];
 
-	let isDark = $state(() => {
-		try { return localStorage.getItem('evaleu-theme') === 'dark'; } catch { return false; }
+	let isDark = $state(false);
+
+	onMount(() => {
+		try { isDark = localStorage.getItem('evaleu-theme') === 'dark'; } catch {}
 	});
 
 	function toggleTheme() {
