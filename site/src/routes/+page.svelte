@@ -12,38 +12,38 @@
 	const published = models.filter((m) => m.siteVisibility === 'published');
 	const topModel = [...published].sort((a, b) => b.overallMean - a.overallMean)[0];
 
-	let isDark = $state(false);
 	let selectedModel: typeof published[0] | null = $state(null);
 
-	onMount(() => {
+	// Theme mode: auto | dark | light
+	type ThemeMode = 'auto' | 'dark' | 'light';
+	let themeMode = $state<ThemeMode>(() => {
 		try {
-			const stored = localStorage.getItem('evaleu-theme');
-			if (stored === 'dark') {
-				isDark = true;
-			} else if (stored === 'light') {
-				isDark = false;
-			} else {
-				// Auto-detect system preference on first visit
-				isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			}
+			const stored = localStorage.getItem('evaleu-theme-mode');
+			if (stored === 'auto' || stored === 'dark' || stored === 'light') return stored;
 		} catch {}
-		document.documentElement.classList.toggle('dark', isDark);
-
-		// Listen for system theme changes while in auto mode
-		const mql = window.matchMedia('(prefers-color-scheme: dark)');
-		mql.addEventListener?.('change', (e) => {
-			if (!localStorage.getItem('evaleu-theme')) {
-				isDark = e.matches;
-				document.documentElement.classList.toggle('dark', isDark);
-			}
-		});
+		return 'auto';
 	});
 
-	function toggleTheme() {
-		isDark = !isDark;
-		try { localStorage.setItem('evaleu-theme', isDark ? 'dark' : 'light'); } catch {}
+	function applyTheme(mode: ThemeMode) {
+		const isDark = mode === 'dark' ? true : mode === 'light' ? false : window.matchMedia('(prefers-color-scheme: dark)').matches;
 		document.documentElement.classList.toggle('dark', isDark);
 	}
+
+	function setTheme(mode: ThemeMode) {
+		themeMode = mode;
+		try { localStorage.setItem('evaleu-theme-mode', mode); } catch {}
+		applyTheme(mode);
+	}
+
+	onMount(() => {
+		applyTheme(themeMode);
+
+		// Listen for system theme changes when in auto mode
+		const mql = window.matchMedia('(prefers-color-scheme: dark)');
+		mql.addEventListener?.('change', () => {
+			if (themeMode === 'auto') applyTheme('auto');
+		});
+	});
 
 	function handleModelClick(model: typeof published[0]) {
 		selectedModel = model;
@@ -57,9 +57,12 @@
 <main class="page">
 	<!-- Header -->
 	<header class="hero glass">
-		<button class="theme-toggle" onclick={toggleTheme} aria-label="Toggle theme">
-			{#if isDark} 🌙 {:else} ☀️ {/if}
-		</button>
+		<!-- Theme selector: Auto / Dark / Light -->
+		<div class="theme-selector" role="group" aria-label="Theme selection">
+			<button class="theme-btn {themeMode === 'auto' ? 'active' : ''}" onclick={() => setTheme('auto')} title="Automatikoa">🌗</button>
+			<button class="theme-btn {themeMode === 'dark' ? 'active' : ''}" onclick={() => setTheme('dark')} title="Iluna">🌙</button>
+			<button class="theme-btn {themeMode === 'light' ? 'active' : ''}" onclick={() => setTheme('light')} title="Argia">☀️</button>
+		</div>
 		<h1>Evaleu</h1>
 		<p class="hero-sub">Basque LLM Evaluation Dashboard</p>
 	</header>
@@ -122,26 +125,40 @@
 		position: relative;
 	}
 
-	.theme-toggle {
+	.theme-selector {
 		position: absolute;
 		top: 1rem;
 		right: 1.5rem;
-		background: none;
+		display: flex;
+		gap: 4px;
+		background: var(--card-bg);
 		border: 2px solid var(--border);
-		border-radius: 50%;
-		width: 44px;
-		height: 44px;
-		font-size: 1.3rem;
+		border-radius: 8px;
+		padding: 4px;
+	}
+
+	.theme-btn {
+		background: none;
+		border: none;
+		font-size: 1.2rem;
 		cursor: pointer;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		transition: all 0.2s ease;
+		width: 36px;
+		height: 36px;
+		border-radius: 6px;
 	}
 
-	.theme-toggle:hover {
+	.theme-btn:hover {
 		transform: scale(1.1);
-		border-color: var(--accent);
+		background: var(--shadow-hover);
+	}
+
+	.theme-btn.active {
+		background: var(--accent);
+		box-shadow: 0 2px 8px var(--shadow-hover);
 	}
 
 	.hero h1 {
@@ -187,7 +204,8 @@
 
 	@media (max-width: 640px) {
 		.hero h1 { font-size: 2rem; }
-		.theme-toggle { top: 0.5rem; right: 0.5rem; width: 38px; height: 38px; font-size: 1.1rem; }
+		.theme-selector { top: 0.5rem; right: 0.5rem; gap: 2px; padding: 3px; }
+		.theme-btn { width: 32px; height: 32px; font-size: 1rem; }
 	}
 
 	/* Glassmorphism */
