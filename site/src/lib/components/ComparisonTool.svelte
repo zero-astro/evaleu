@@ -161,7 +161,7 @@
 		background: var(--accent);
 		border-color: var(--accent);
 		color: #fff;
-		box-shadow: 0 2px 8px rgba(9, 132, 227, 0.3);
+		box-shadow: 0 2px 8px rgba(9, 132, 227, 0.4);
 	}
 
 	.comp-chip:disabled:not(.active) {
@@ -172,8 +172,8 @@
 	.comp-table-wrap {
 		overflow-x: auto;
 		border-radius: 12px;
-		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-		background: #fff;
+		box-shadow: 0 2px 12px var(--shadow);
+		background: var(--card-bg);
 		transition: all 0.3s;
 	}
 
@@ -187,11 +187,11 @@
 	.comp-table td {
 		padding: 10px 14px;
 		text-align: center;
-		border-bottom: 1px solid #f0f0f0;
+		border-bottom: 1px solid var(--border);
 	}
 
 	.comp-table thead th {
-		background: #f8f9fa;
+		background: rgba(128,128,128,0.1);
 		font-weight: 600;
 		color: var(--text);
 		transition: all 0.3s;
@@ -204,14 +204,14 @@
 	}
 
 	.comp-cell.best {
-		background: rgba(0, 184, 148, 0.12);
-		color: #00b894;
+		background: rgba(0, 184, 148, 0.2);
+		color: #55efc4;
 		font-weight: 700;
 		border-radius: 4px;
 	}
 
 	.comp-overall td {
-		background: #f8f9fa;
+		background: rgba(128,128,128,0.08);
 		font-weight: 700;
 	}
 
