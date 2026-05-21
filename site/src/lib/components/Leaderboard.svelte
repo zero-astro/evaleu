@@ -27,8 +27,8 @@
 	}
 
 	function getScoreColor(mean: number): string {
-		if (mean >= 0.55) return '#00b894';   // berdea = onenak
-		if (mean >= 0.40) return '#e17055';   // laranja = erdipurdikoak
+		if (mean >= 0.65) return '#00b894';   // berdea = onenak
+		if (mean >= 0.50) return '#e17055';   // laranja = erdipurdikoak
 		return '#d63031';                      // gorria = txarrak
 	}
 
