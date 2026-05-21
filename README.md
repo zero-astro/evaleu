@@ -1,6 +1,6 @@
 # Basque LLM Evaluation (single-CLI workflow)
 
-This repo benchmarks Basque-capable local LLMs served through a private OpenAI-compatible endpoint and publishes a static comparison website.
+This repo benchmarks Basque-capable local LLMs served through a private OpenAI-compatible endpoint and publishes an interactive comparison website.
 
 The operational interface is **one CLI**:
 
@@ -23,7 +23,7 @@ Back-compat shortcut also works:
 uv run evaleu.py --model latxa-qwen3-vl-4b
 ```
 
-### Evaluate all models in `site/model_cards.json`
+### Evaluate all models in `model_cards.json`
 ```bash
 uv run evaleu.py eval --all
 ```
@@ -80,17 +80,85 @@ For `qwen3.5-27b`, eval uses no-thinking mode (`--max-tokens 4096 --timeout 300`
 ---
 
 ## Repository structure
-- `evaleu.py` — single operational CLI
-- `eval/run_eval.py` — evaluator engine (benchmark registry + scoring)
-- `eval/summarize_multiseed.py` — summary builder (`eval/summary.json`)
-- `site/model_cards.json` — model registry + metadata
-- `site/build_site_data.py` — builds `site/data.json`
-- `site/index.html` — static report UI
+
+```
+evaleu.py              # single operational CLI (entry point)
+model_cards.json       # model registry + metadata (display names, families, params)
+README.md              # this file
+TODO.md                # development backlog & phase tracking
+
+eval/                  # evaluation engine & data
+  run_eval.py          # evaluator engine (benchmark registry + scoring)
+  summarize_multiseed.py  # summary builder → eval/summary.json
+  summary.json         # aggregated results from all seeds
+  openai-endpoint-config.yaml  # endpoint configuration template
+  BENCHMARK4_ONBOARDING.md     # benchmark onboarding guide
+
+site/                  # SvelteKit static website (interactive dashboard)
+  package.json         # npm dependencies & scripts
+  svelte.config.js     # SvelteKit + adapter-static config
+  vite.config.ts       # Vite build configuration
+  src/routes/+page.svelte   # main dashboard page
+  src/lib/components/      # reusable UI components:
+    Leaderboard.svelte        # interactive table (sort, filter, search)
+    ScoreBar.svelte         # animated horizontal bar chart
+    RadarPlot.svelte        # radar/spider chart per model (@nivo/radar)
+    TimelineChart.svelte    # custom SVG scatter plot (date vs accuracy)
+    ComparisonTool.svelte   # multi-select comparison selector (2-4 models)
+  src/lib/data/           # typed data modules:
+    benchmarks.ts         # benchmark metadata (auto-generated from summary.json)
+    models.ts             # model records (auto-generated from summary.json)
+  build_site_data.py      # Python script → generates TS modules from eval/summary.json
+
+.github/workflows/deploy-pages.yml   # CI/CD: push main → gh-pages deploy
+tests/                   # unit tests for CLI and site data pipeline
+docs/                    # project documentation & resources
+```
 
 ---
 
-## Publish
-Commit + push to `main`. GitHub Actions auto-deploys `site/` to `gh-pages`.
+## Publish (deployment)
+
+The website is deployed via **GitHub Actions** to GitHub Pages. The workflow runs automatically on every push to `main`:
+
+1. Checkout the repository
+2. Optionally rebuild `site/data.json` from `eval/summary.json` if present in the repo
+3. Deploy `site/build/` (static export) to the `gh-pages` branch using `peaceiris/actions-gh-pages@v4`
+
+### Local workflow (how to publish new evaluations)
+
+```bash
+# 1. Run evaluation locally
+uv run evaleu.py eval --model my-new-model
+
+# 2. Summarize results
+uv run evaleu.py summarize
+
+# 3. Build site data pipeline
+uv run evaleu.py build   # or: cd site && npm run build-data
+
+# 4. Preview locally (optional)
+cd site && npm run preview
+
+# 5. Commit and push → triggers GitHub Actions deploy
+git add -A && git commit -m "Add my-new-model evaluation" && git push origin main
+```
+
+The website will be live on `gh-pages` within a few minutes after the push.
+
+### Previewing locally
+
+```bash
+cd site
+npm install          # if not already done
+npm run build-data   # regenerate typed data from summary.json
+npm run dev          # start dev server at localhost:5173
+# or
+npm run build        # production build → site/build/
+npm run preview      # serve built output locally
+```
+
+---
 
 ## Privacy
 - Keep endpoint in local `.env` (`OPENAI_API_BASE=...`)
