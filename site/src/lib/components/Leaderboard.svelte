@@ -26,6 +26,12 @@
 		return `${(val * 100).toFixed(1)}%`;
 	}
 
+	function getScoreColor(mean: number): string {
+		if (mean >= 0.7) return '#00b894';
+		if (mean >= 0.5) return '#e17055';
+		return '#636e72';
+	}
+
 	// Local reactive state for the leaderboard filters
 	let f = $state({ sortKey: 'overallMean', sortDir: 'desc' as const, familyFilter: 'all', search: '' });
 
@@ -96,7 +102,17 @@
 					<tr class="lb-row" onclick={() => onModelClick(model)} style="cursor: pointer;">
 						<td class="lb-rank">{i + 1}</td>
 						<td class="lb-name">{model.displayName}</td>
-						<td class="lb-score">{formatPercent(model.overallMean)}</td>
+						<td>
+						<div class="score-cell">
+							<span class="score-text">{formatPercent(model.overallMean)}</span>
+							<div class="score-track">
+								<div
+									class="score-fill"
+									style="width: {model.overallMean * 100}%; background: {getScoreColor(model.overallMean)};"
+								></div>
+							</div>
+						</div>
+					</td>
 						<td>{model.params}</td>
 						<td>
 							<span
@@ -221,6 +237,33 @@
 	.lb-score {
 		font-weight: 700;
 		font-variant-numeric: tabular-nums;
+	}
+
+	.score-cell {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-width: 200px;
+	}
+
+	.score-text {
+		font-weight: 700;
+		white-space: nowrap;
+		min-width: 55px;
+	}
+
+	.score-track {
+		flex: 1;
+		height: 8px;
+		background: var(--border);
+		border-radius: 4px;
+		overflow: hidden;
+	}
+
+	.score-fill {
+		height: 100%;
+		border-radius: 4px;
+		transition: width 0.6s ease-out, background 0.3s;
 	}
 
 	.lb-badge {
