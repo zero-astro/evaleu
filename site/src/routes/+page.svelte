@@ -46,6 +46,14 @@
 		<p class="hero-sub">Basque LLM Evaluation Dashboard</p>
 	</header>
 
+	<!-- Top model score bar -->
+	<section class="section section-center glass-card">
+		<h2>⭐ Top Performer</h2>
+		{#if topModel}
+			<ScoreBar model={topModel} />
+		{/if}
+	</section>
+
 	<!-- Leaderboard -->
 	<section class="section glass-card">
 		<div class="card-header">
@@ -53,14 +61,6 @@
 			<ExportButton {models} />
 		</div>
 		<Leaderboard {models} {benchmarks} onModelClick={handleModelClick} />
-	</section>
-
-	<!-- Top model score bar -->
-	<section class="section section-center glass-card">
-		<h2>⭐ Top Performer</h2>
-		{#if topModel}
-			<ScoreBar model={topModel} />
-		{/if}
 	</section>
 
 	<!-- Radar + Timeline side by side -->
