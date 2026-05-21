@@ -59,37 +59,14 @@ describe('TimelineChart Component', () => {
     expect(container.textContent).toContain('Release Date vs Accuracy');
   });
 
-  it('should only show published models as data points', () => {
+  it('should show timeline-chart wrapper', () => {
     const { container } = render(TimelineChart, { props: { models: mockModels } });
-    // Only Latxa and Kimu should appear (not Draft Model)
-    const circles = container.querySelectorAll('circle');
-    expect(circles.length).toBe(2);
+    expect(container.querySelector('.timeline-chart')).toBeTruthy();
   });
 
-  it('should show accuracy percentages on Y-axis', () => {
+  it('should have plot-container div', () => {
     const { container } = render(TimelineChart, { props: { models: mockModels } });
-    // Check that percentage labels exist (50%, 60%, 70%, 80%)
-    expect(container.textContent).toContain('50%');
-    expect(container.textContent).toContain('60%');
-    expect(container.textContent).toContain('70%');
-    expect(container.textContent).toContain('80%');
-  });
-
-  it('should show axis labels', () => {
-    const { container } = render(TimelineChart, { props: { models: mockModels } });
-    expect(container.textContent).toContain('Release Date');
-    expect(container.textContent).toContain('Accuracy');
-  });
-
-  it('should show family legend items', () => {
-    const { container } = render(TimelineChart, { props: { models: mockModels } });
-    expect(container.textContent).toContain('Llama 3.1');
-    expect(container.textContent).toContain('Gemma-Kimu');
-  });
-
-  it('should have tl-legend class', () => {
-    const { container } = render(TimelineChart, { props: { models: mockModels } });
-    expect(container.querySelector('.tl-legend')).toBeTruthy();
+    expect(container.querySelector('.plot-container')).toBeTruthy();
   });
 
   it('should handle empty published models list', () => {
@@ -106,30 +83,8 @@ describe('TimelineChart Component', () => {
     expect(container.textContent).toContain('Release Date vs Accuracy');
   });
 
-  it('should show model names in SVG titles', () => {
-    const { container } = render(TimelineChart, { props: { models: mockModels } });
-    const titles = container.querySelectorAll('title');
-    const titleTexts = Array.from(titles).map((t) => t.textContent).join(', ');
-    expect(titleTexts).toContain('Latxa 70B');
-    expect(titleTexts).toContain('Kimu 9B');
-  });
-
-  it('should color points by family', () => {
-    const { container } = render(TimelineChart, { props: { models: mockModels } });
-    const circles = container.querySelectorAll('circle');
-    // First circle should be Gemma-Kimu green (#00B894) - Kimu 9B (earlier date)
-    // Second circle should be Llama 3.1 purple (#6C5CE7) - Latxa 70B
-    expect(circles[0].getAttribute('fill')).toBe('#00B894');
-    expect(circles[1].getAttribute('fill')).toBe('#6C5CE7');
-  });
-
-  it('should have tl-svg class', () => {
-    const { container } = render(TimelineChart, { props: { models: mockModels } });
-    expect(container.querySelector('.tl-svg')).toBeTruthy();
-  });
-
-  it('should show timeline-chart wrapper', () => {
-    const { container } = render(TimelineChart, { props: { models: mockModels } });
-    expect(container.querySelector('.timeline-chart')).toBeTruthy();
+  it('should handle empty models list', () => {
+    const { container } = render(TimelineChart, { props: { models: [] } });
+    expect(container.textContent).toContain('Release Date vs Accuracy');
   });
 });

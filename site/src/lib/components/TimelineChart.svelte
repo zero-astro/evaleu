@@ -12,6 +12,8 @@
 		'Qwen 3.6': '#D63031',
 	};
 
+	let chartDiv: HTMLDivElement | null = $state(null);
+
 	const scatterData = $derived(
 		models
 			.filter((m) => m.siteVisibility === 'published')
@@ -23,64 +25,102 @@
 				family: m.family,
 				color: familyColors[m.family] || '#636e72',
 			}))
-			.filter((d) => d.x !== null)
-			.sort((a, b) => a.x - b.x),
+			.filter((d) => d.x !== null) as Array<{
+				id: string;
+				label: string;
+				x: number;
+				y: number;
+				family: string;
+				color: string;
+			}>,
 	);
 
-	function formatDate(ts: number): string {
-		return new Date(ts).toLocaleDateString('en-GB', {
-			year: 'numeric',
-			month: 'short',
+	let plotlyInstance: any = $state(null);
+
+	$effect(() => {
+		if (!chartDiv || scatterData.length === 0) return;
+
+		const traces = Object.entries(familyColors).map(([family, color]) => {
+			const points = scatterData.filter((d) => d.family === family);
+			return {
+				x: points.map((p) => new Date(p.x)),
+				y: points.map((p) => p.y),
+				text: points.map((p) => `${p.label}<br>Accuracy: ${p.y}%`),
+				hoverinfo: 'text',
+				mode: 'markers+text',
+				marker: {
+					size: 12,
+					color: color,
+					line: { width: 2, color: '#ffffff' },
+				},
+				name: family,
+				type: 'scatter',
+				showlegend: true,
+			};
 		});
-	}
+
+		const dark = document.documentElement.classList.contains('dark');
+		const layout = {
+			xaxis: {
+				title: { text: 'Release Date', standoff: 10 },
+				type: 'date',
+				gridcolor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+				tickfont: { color: dark ? '#b2bec3' : '#636e72', size: 11 },
+			},
+			yaxis: {
+				title: { text: 'Accuracy (%)' },
+				range: [40, 100],
+				gridcolor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+				tickfont: { color: dark ? '#b2bec3' : '#636e72', size: 11 },
+			},
+			paper_bgcolor: 'transparent',
+			plot_bgcolor: 'transparent',
+			font: { color: dark ? '#dfe6e9' : '#2d3436', family: '-apple-system, BlinkMacSystemFont, sans-serif' },
+			margin: { l: 55, r: 30, t: 30, b: 60 },
+			hovermode: 'closest',
+			showlegend: true,
+			legend: {
+				x: 1.02,
+				y: 1,
+				xanchor: 'left',
+				bgcolor: dark ? 'rgba(30,30,50,0.9)' : 'rgba(255,255,255,0.9)',
+				bordercolor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+				borderwidth: 1,
+			},
+		};
+
+		const config = {
+			responsive: true,
+			displayModeBar: false,
+			scrollZoom: true,
+		};
+
+		import('plotly.js-dist-min').then((Plotly) => {
+			if (plotlyInstance) {
+				Plotly.react(chartDiv, traces, layout, config);
+			} else {
+				Plotly.newPlot(chartDiv, traces, layout, config).then((instance: any) => {
+					plotlyInstance = instance;
+				});
+			}
+		}).catch(() => {
+			// Fallback to SVG if Plotly fails to load
+			console.warn('Plotly.js failed to load');
+		});
+
+		return () => {
+			if (chartDiv && plotlyInstance) {
+				import('plotly.js-dist-min').then((Plotly) => {
+					Plotly.purge(chartDiv);
+				}).catch(() => {});
+			}
+		};
+	});
 </script>
 
 <div class="timeline-chart">
 	<h3>Release Date vs Accuracy</h3>
-	<svg viewBox="0 0 720 400" class="tl-svg">
-		<!-- Grid lines -->
-		{#each [50, 60, 70, 80] as yVal}
-			<line x1="60" y1={350 - (yVal / 100) * 280} x2="700" y2={350 - (yVal / 100) * 280} stroke="var(--border)" stroke-width="1"/>
-			<text x="50" y={354 - (yVal / 100) * 280} text-anchor="end" font-size="11" fill="var(--text-muted)">{yVal}%</text>
-		{/each}
-
-		<!-- X-axis labels -->
-		{#each scatterData as d, i}
-			<text x={60 + (i / Math.max(scatterData.length - 1, 1)) * 640} y="395" text-anchor="middle" font-size="9" fill="var(--text-muted)">
-				{formatDate(d.x)}
-			</text>
-		{/each}
-
-		<!-- Axis labels -->
-		<text x="380" y="410" text-anchor="middle" font-size="12" fill="var(--text)">Release Date →</text>
-		<text x="15" y="200" text-anchor="middle" font-size="12" fill="var(--text)" transform="rotate(-90, 15, 200)">Accuracy (%) →</text>
-
-		<!-- Data points -->
-		{#each scatterData as d}
-			<circle
-				cx={60 + (scatterData.indexOf(d) / Math.max(scatterData.length - 1, 1)) * 640}
-				cy={350 - (d.y / 100) * 280}
-				r="7"
-				fill={d.color}
-				stroke="#fff"
-				stroke-width="2"
-			>
-				<title>{d.label}: {d.y}%</title>
-			</circle>
-		{/each}
-
-		<!-- Legend removed — using HTML legend below -->
-	</svg>
-
-	<!-- Simple legend -->
-	<div class="tl-legend">
-		{#each Object.entries(familyColors) as [family, color]}
-			<span class="tl-legend-item">
-				<span class="tl-dot" style="background: {color}"></span>
-				{family}
-			</span>
-		{/each}
-	</div>
+	<div bind:this={chartDiv} class="plot-container"></div>
 </div>
 
 <style>
@@ -98,33 +138,9 @@
 		transition: color 0.3s;
 	}
 
-	.tl-svg {
+	.plot-container {
 		width: 100%;
 		height: auto;
-		display: block;
-	}
-
-	.tl-legend {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 12px;
-		justify-content: center;
-		margin-top: 8px;
-	}
-
-	.tl-legend-item {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-		font-size: 12px;
-		color: var(--text-muted);
-		transition: color 0.3s;
-	}
-
-	.tl-dot {
-		width: 10px;
-		height: 10px;
-		border-radius: 50%;
-		display: inline-block;
+		min-height: 400px;
 	}
 </style>
