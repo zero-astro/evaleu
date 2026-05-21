@@ -89,7 +89,13 @@
 		<ComparisonTool {models} />
 	</section>
 
-	<!-- Radar + Timeline side by side -->
+	<!-- Evolution over time -->
+	<section class="section glass-card">
+		<div class="card-header"><h2>📈 Evolution Over Time</h2></div>
+		<TimelineChart models={published} />
+	</section>
+
+	<!-- Radar plots only -->
 	<section class="section glass-card">
 		<div class="card-header"><h2>📊 Benchmark Breakdown &amp; Trends</h2></div>
 		<div class="charts-grid">
@@ -97,7 +103,6 @@
 				<RadarPlot model={model} />
 			{/each}
 		</div>
-		<TimelineChart models={published} />
 	</section>
 
 	<!-- Benchmark Drill-Down -->
