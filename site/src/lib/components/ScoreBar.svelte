@@ -52,7 +52,8 @@
 	.sb-name {
 		font-weight: 700;
 		font-size: 18px;
-		color: #2d3436;
+		color: var(--text);
+		transition: color 0.3s;
 	}
 
 	.sb-pct {
@@ -64,24 +65,27 @@
 	.sb-track {
 		width: 100%;
 		height: 24px;
-		background: #f0f0f0;
+		background: var(--border);
 		border-radius: 12px;
 		overflow: hidden;
 		position: relative;
+		transition: background 0.3s;
 	}
 
 	.sb-fill {
 		height: 100%;
 		border-radius: 12px;
-		transition: width 1s ease-out;
+		transition: width 1s ease-out, background 0.3s;
 		min-width: 4px;
+		box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 	}
 
 	.sb-tier {
 		display: block;
 		text-align: right;
 		font-size: 13px;
-		color: #636e72;
+		color: var(--text-muted);
 		margin-top: 4px;
+		transition: color 0.3s;
 	}
 </style>

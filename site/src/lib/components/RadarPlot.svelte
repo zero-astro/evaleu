@@ -39,9 +39,8 @@
 		width={480}
 		height={400}
 		margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-		blinkData={[{ id: model.displayName }]}
 		theme={{
-			textStyle: { fill: '#2d3436', fontSize: '12px' },
+			textStyle: { fill: 'var(--text)', fontSize: '12px' },
 			background: 'transparent',
 		}}
 	/>
@@ -57,7 +56,8 @@
 	.radar-plot h3 {
 		margin-bottom: 8px;
 		font-size: 16px;
-		color: #2d3436;
+		color: var(--text);
 		text-align: center;
+		transition: color 0.3s;
 	}
 </style>

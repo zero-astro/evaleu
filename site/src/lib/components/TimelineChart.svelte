@@ -40,20 +40,20 @@
 	<svg viewBox="0 0 720 400" class="tl-svg">
 		<!-- Grid lines -->
 		{#each [50, 60, 70, 80] as yVal}
-			<line x1="60" y1={350 - (yVal / 100) * 280} x2="700" y2={350 - (yVal / 100) * 280} stroke="#eee" stroke-width="1"/>
-			<text x="50" y={354 - (yVal / 100) * 280} text-anchor="end" font-size="11" fill="#636e72">{yVal}%</text>
+			<line x1="60" y1={350 - (yVal / 100) * 280} x2="700" y2={350 - (yVal / 100) * 280} stroke="var(--border)" stroke-width="1"/>
+			<text x="50" y={354 - (yVal / 100) * 280} text-anchor="end" font-size="11" fill="var(--text-muted)">{yVal}%</text>
 		{/each}
 
 		<!-- X-axis labels -->
 		{#each scatterData as d, i}
-			<text x={60 + (i / Math.max(scatterData.length - 1, 1)) * 640} y="395" text-anchor="middle" font-size="9" fill="#636e72">
+			<text x={60 + (i / Math.max(scatterData.length - 1, 1)) * 640} y="395" text-anchor="middle" font-size="9" fill="var(--text-muted)">
 				{formatDate(d.x)}
 			</text>
 		{/each}
 
 		<!-- Axis labels -->
-		<text x="380" y="410" text-anchor="middle" font-size="12" fill="#2d3436">Release Date →</text>
-		<text x="15" y="200" text-anchor="middle" font-size="12" fill="#2d3436" transform="rotate(-90, 15, 200)">Accuracy (%) →</text>
+		<text x="380" y="410" text-anchor="middle" font-size="12" fill="var(--text)">Release Date →</text>
+		<text x="15" y="200" text-anchor="middle" font-size="12" fill="var(--text)" transform="rotate(-90, 15, 200)">Accuracy (%) →</text>
 
 		<!-- Data points -->
 		{#each scatterData as d}
@@ -93,8 +93,9 @@
 	.timeline-chart h3 {
 		text-align: center;
 		font-size: 16px;
-		color: #2d3436;
+		color: var(--text);
 		margin-bottom: 8px;
+		transition: color 0.3s;
 	}
 
 	.tl-svg {
@@ -116,7 +117,8 @@
 		align-items: center;
 		gap: 4px;
 		font-size: 12px;
-		color: #636e72;
+		color: var(--text-muted);
+		transition: color 0.3s;
 	}
 
 	.tl-dot {

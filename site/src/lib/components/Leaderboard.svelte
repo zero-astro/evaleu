@@ -154,25 +154,27 @@
 		flex: 1;
 		min-width: 200px;
 		padding: 8px 14px;
-		border: 1px solid #dfe6e9;
+		border: 1px solid var(--border);
 		border-radius: 8px;
 		font-size: 15px;
 		outline: none;
-		transition: border-color 0.2s;
+		transition: border-color 0.2s, background 0.3s;
 	}
 
 	.lb-search:focus {
-		border-color: #0984e3;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.15);
 	}
 
 	.lb-filters select {
 		padding: 8px 14px;
-		border: 1px solid #dfe6e9;
+		border: 1px solid var(--border);
 		border-radius: 8px;
 		font-size: 15px;
 		outline: none;
 		background: #fff;
 		cursor: pointer;
+		transition: all 0.3s;
 	}
 
 	.lb-table-wrap {
@@ -180,6 +182,7 @@
 		border-radius: 12px;
 		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 		background: #fff;
+		transition: all 0.3s;
 	}
 
 	.lb-table {
@@ -247,5 +250,6 @@
 
 	.lb-row:hover {
 		background: #f8f9fa;
+		transition: background 0.15s;
 	}
 </style>

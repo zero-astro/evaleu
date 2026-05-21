@@ -55,12 +55,13 @@
   - [x] `+page.svelte` dashboard layout integrating all components
   - [x] Build verified: `npm run build` → clean, no warnings
 
-- [ ] **Phase 4: UI/UX polish**
-  - [ ] Dark/light mode toggle with localStorage persistence
-  - [ ] Glassmorphism card design system (CSS variables, blur effects)
-  - [ ] Color-coded model families (Core = blue, BasqueGLUE = green, LatxaEvalSuite = purple)
-  - [ ] Smooth transitions and hover micro-interactions
-  - [ ] Responsive mobile-first layout
+- [x] **Phase 4: UI/UX polish** ✅
+  - [x] Dark/light mode toggle with localStorage persistence (🌙/☀️ button)
+  - [x] Glassmorphism card design system (CSS variables, backdrop-filter blur effects)
+  - [x] Color-coded model families via familyColors map
+  - [x] Smooth transitions and hover micro-interactions (hover lift, scale, color shifts)
+  - [x] Responsive mobile-first layout (@media breakpoints)
+  - [x] Gradient hero title, emoji section headers
 
 - [ ] **Phase 5: Build & deploy**
   - [ ] Configure SvelteKit static export (`adapter-static`)

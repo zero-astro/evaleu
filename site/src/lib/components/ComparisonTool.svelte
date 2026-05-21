@@ -119,15 +119,17 @@
 	.comparison-tool h3 {
 		text-align: center;
 		font-size: 18px;
-		color: #2d3436;
+		color: var(--text);
 		margin-bottom: 4px;
+		transition: color 0.3s;
 	}
 
 	.comp-hint {
 		text-align: center;
 		font-size: 13px;
-		color: #b2bec3;
+		color: var(--text-muted);
 		margin-bottom: 12px;
+		transition: color 0.3s;
 	}
 
 	.comp-selectors {
@@ -140,24 +142,26 @@
 
 	.comp-chip {
 		padding: 6px 14px;
-		border: 2px solid #dfe6e9;
+		border: 2px solid var(--border);
 		border-radius: 20px;
-		background: #fff;
+		background: transparent;
 		font-size: 13px;
 		cursor: pointer;
-		transition: all 0.15s;
-		color: #636e72;
+		transition: all 0.2s ease;
+		color: var(--text-muted);
 	}
 
 	.comp-chip:hover:not(:disabled) {
-		border-color: #0984e3;
-		color: #0984e3;
+		border-color: var(--accent);
+		color: var(--accent);
+		transform: translateY(-1px);
 	}
 
 	.comp-chip.active {
-		background: #0984e3;
-		border-color: #0984e3;
+		background: var(--accent);
+		border-color: var(--accent);
 		color: #fff;
+		box-shadow: 0 2px 8px rgba(9, 132, 227, 0.3);
 	}
 
 	.comp-chip:disabled:not(.active) {
@@ -170,6 +174,7 @@
 		border-radius: 12px;
 		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 		background: #fff;
+		transition: all 0.3s;
 	}
 
 	.comp-table {
@@ -188,7 +193,8 @@
 	.comp-table thead th {
 		background: #f8f9fa;
 		font-weight: 600;
-		color: #2d3436;
+		color: var(--text);
+		transition: all 0.3s;
 	}
 
 	.comp-row td:first-child,
@@ -211,7 +217,8 @@
 
 	.comp-empty {
 		text-align: center;
-		color: #b2bec3;
+		color: var(--text-muted);
 		padding: 24px;
+		transition: color 0.3s;
 	}
 </style>
