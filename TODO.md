@@ -95,8 +95,9 @@
   - [x] Add `npm test` script to site/package.json
   - [x] Document testing workflow in README.md
 
-- [ ] **Phase 7: Advanced features (nice-to-have)**
-  - [ ] CSV/JSON export of leaderboard data
-  - [ ] Bookmarkable URLs for filtered/sorted views
-  - [ ] Per-benchmark drill-down view
-  - [ ] Model detail modal with metadata and release info
+- [x] **Phase 7: Advanced features (nice-to-have)** ✅
+  - [x] CSV/JSON export of leaderboard data (`ExportButton.svelte`)
+  - [x] Bookmarkable URLs for filtered/sorted views (`url-sync.ts` + `initUrlSync()`)
+  - [x] Per-benchmark drill-down view (`BenchmarkDrilldown.svelte`)
+  - [x] Model detail modal with metadata and release info (`ModelDetailModal.svelte`)
+  - [x] All 73 tests passing (Vitest unit + data integrity)

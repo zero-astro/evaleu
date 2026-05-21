@@ -1,19 +1,11 @@
 <script lang="ts">
 	import type { ModelRecord } from '$lib/data/models';
-	import type { BenchmarkInfo } from '$lib/data/benchmarks';
+	import type { BenchmarkInfo } from '$lib/benchmarks';
+	import { filterStore, applyFilter, initUrlSync, applyFiltersToModels } from '$lib/state/url-sync';
+	import { onMount } from 'svelte';
 
-	let { models, benchmarks }: { models: ModelRecord[]; benchmarks: BenchmarkInfo[] } = $props();
-
-	interface SortConfig {
-		key: keyof ModelRecord;
-		dir: 'asc' | 'desc';
-	}
-
-	let sort = $state<SortConfig>({ key: 'overallMean', dir: 'desc' });
-	let search = $state('');
-	let familyFilter = $state<string>('all');
-
-	const families = $derived(['all', ...Array.from(new Set(models.map((m) => m.family)))]);
+	let { models, benchmarks, onModelClick }: { models: ModelRecord[]; benchmarks: BenchmarkInfo[]; onModelClick?: (model: ModelRecord) => void } = $props();
+	onModelClick ||= () => {};
 
 	const familyColors: Record<string, string> = {
 		'Llama 3.1': '#6C5CE7',
@@ -30,53 +22,36 @@
 		{ key: 'family', label: 'Family' },
 	];
 
-	function toggleSort(key: keyof ModelRecord) {
-		if (sort.key === key) {
-			sort.dir = sort.dir === 'asc' ? 'desc' : 'asc';
-		} else {
-			sort = { key, dir: 'desc' };
-		}
-	}
-
-	function getSortedModels() {
-		let filtered = models.filter((m) => m.siteVisibility === 'published');
-
-		if (search.trim()) {
-			const q = search.toLowerCase();
-			filtered = filtered.filter(
-				(m) => m.displayName.toLowerCase().includes(q),
-			);
-		}
-
-		if (familyFilter !== 'all') {
-			filtered = filtered.filter((m) => m.family === familyFilter);
-		}
-
-		return [...filtered].sort((a, b) => {
-			const aVal = a[sort.key];
-			const bVal = b[sort.key];
-
-			if (sort.key === 'params') {
-				const numA = parseFloat(a.params);
-				const numB = parseFloat(b.params);
-				return sort.dir === 'asc' ? numA - numB : numB - numA;
-			}
-
-			if (typeof aVal === 'number' && typeof bVal === 'number') {
-				return sort.dir === 'asc' ? aVal - bVal : bVal - aVal;
-			}
-
-			return sort.dir === 'asc'
-				? String(aVal).localeCompare(String(bVal))
-				: String(bVal).localeCompare(String(aVal));
-		});
-	}
-
 	function formatPercent(val: number) {
 		return `${(val * 100).toFixed(1)}%`;
 	}
 
+	// Local reactive state for the leaderboard filters
+	let f = $state({ sortKey: 'overallMean', sortDir: 'desc' as const, familyFilter: 'all', search: '' });
+
+	onMount(() => initUrlSync());
+
+	function getSortedModels() {
+		return applyFiltersToModels(models, f);
+	}
+
 	const sorted = $derived(getSortedModels());
+
+	function handleSort(key: keyof ModelRecord) {
+		f.sortDir = f.sortKey === key && f.sortDir === 'desc' ? 'asc' : 'desc';
+		f.sortKey = String(key);
+		applyFilter({ sortKey: f.sortKey, sortDir: f.sortDir });
+	}
+
+	function handleSearch(value: string) {
+		f.search = value;
+		applyFilter({ search: value });
+	}
+
+	function handleFamily(value: string) {
+		f.familyFilter = value;
+		applyFilter({ familyFilter: value });
+	}
 </script>
 
 <div class="leaderboard">
@@ -86,11 +61,12 @@
 			type="text"
 			class="lb-search"
 			placeholder="Search models..."
-			bind:value={search}
+			value={f.search}
+			oninput={(e) => handleSearch((e.target as HTMLInputElement).value)}
 		/>
-		<select bind:value={familyFilter}>
-			{#each families as f}
-				<option value={f}>{f === 'all' ? 'All Families' : f}</option>
+		<select value={f.familyFilter} onchange={(e) => handleFamily((e.target as HTMLSelectElement).value)}>
+			{#each ['all', ...Array.from(new Set(models.map((m) => m.family)))] as ff}
+				<option value={ff}>{ff === 'all' ? 'All Families' : ff}</option>
 			{/each}
 		</select>
 	</div>
@@ -104,11 +80,11 @@
 					{#each columns as col}
 						<th
 							class="lb-sortable"
-							onclick={() => toggleSort(col.key)}
+							onclick={() => handleSort(col.key)}
 						>
 							{col.label}
 							<span class="lb-arrow">
-								{sort.key === col.key ? (sort.dir === 'asc' ? '▲' : '▼') : ''}
+								{f.sortKey === String(col.key) ? (f.sortDir === 'asc' ? '▲' : '▼') : ''}
 							</span>
 						</th>
 					{/each}
@@ -116,7 +92,7 @@
 			</thead>
 			<tbody>
 				{#each sorted as model, i}
-					<tr class="lb-row">
+					<tr class="lb-row" onclick={() => onModelClick(model)} style="cursor: pointer;">
 						<td class="lb-rank">{i + 1}</td>
 						<td class="lb-name">{model.displayName}</td>
 						<td class="lb-score">{formatPercent(model.overallMean)}</td>
@@ -134,6 +110,9 @@
 			</tbody>
 		</table>
 	</div>
+
+	<!-- Row count hint -->
+	<p class="lb-hint">{sorted.length} models shown · Click a row for details</p>
 </div>
 
 <style>
@@ -251,5 +230,12 @@
 	.lb-row:hover {
 		background: #f8f9fa;
 		transition: background 0.15s;
+	}
+
+	.lb-hint {
+		text-align: center;
+		color: var(--text-muted);
+		font-size: 0.85rem;
+		margin-top: 8px;
 	}
 </style>

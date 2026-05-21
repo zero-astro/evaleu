@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { render, fireEvent } from '@testing-library/svelte';
+import { render, fireEvent, waitFor } from '@testing-library/svelte';
+import { tick } from 'svelte';
 import Leaderboard from '$lib/components/Leaderboard.svelte';
 
 const mockModels = [
@@ -122,9 +123,12 @@ describe('Leaderboard Component', () => {
     const headers = container.querySelectorAll('.lb-sortable');
     await fireEvent.click(headers[0]);
     
-    // Now Kimu (lower) should appear before Latxa (higher)
-    const rows = container.querySelectorAll('.lb-row');
-    expect(rows[0].textContent).toContain('Kimu 9B');
+    // Wait for Svelte 5 reactive state update
+    await tick();
+    await waitFor(() => {
+      const rows = container.querySelectorAll('.lb-row');
+      expect(rows[0].textContent).toContain('Kimu 9B');
+    });
   });
 
   it('should format percentages correctly', () => {

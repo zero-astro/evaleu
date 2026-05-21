@@ -6,12 +6,16 @@
 	import RadarPlot from '$lib/components/RadarPlot.svelte';
 	import TimelineChart from '$lib/components/TimelineChart.svelte';
 	import ComparisonTool from '$lib/components/ComparisonTool.svelte';
+	import ExportButton from '$lib/components/ExportButton.svelte';
+	import ModelDetailModal from '$lib/components/ModelDetailModal.svelte';
+	import BenchmarkDrilldown from '$lib/components/BenchmarkDrilldown.svelte';
 	import { onMount } from 'svelte';
 
 	const published = models.filter((m) => m.siteVisibility === 'published');
 	const topModel = [...published].sort((a, b) => b.overallMean - a.overallMean)[0];
 
 	let isDark = $state(false);
+	let selectedModel: typeof published[0] | null = $state(null);
 
 	onMount(() => {
 		try { isDark = localStorage.getItem('evaleu-theme') === 'dark'; } catch {}
@@ -21,6 +25,10 @@
 		isDark = !isDark;
 		try { localStorage.setItem('evaleu-theme', isDark ? 'dark' : 'light'); } catch {}
 		document.documentElement.classList.toggle('dark', isDark);
+	}
+
+	function handleModelClick(model: typeof published[0]) {
+		selectedModel = model;
 	}
 </script>
 
@@ -40,8 +48,11 @@
 
 	<!-- Leaderboard -->
 	<section class="section glass-card">
-		<div class="card-header"><h2>🏆 Leaderboard</h2></div>
-		<Leaderboard {models} {benchmarks} />
+		<div class="card-header">
+			<h2>🏆 Leaderboard</h2>
+			<ExportButton {models} />
+		</div>
+		<Leaderboard {models} {benchmarks} onModelClick={handleModelClick} />
 	</section>
 
 	<!-- Top model score bar -->
@@ -63,11 +74,22 @@
 		<TimelineChart models={published} />
 	</section>
 
+	<!-- Benchmark Drill-Down -->
+	<section class="section glass-card">
+		<div class="card-header"><h2>🔍 Per-Benchmark Drill-Down</h2></div>
+		<BenchmarkDrilldown {models} {benchmarks} />
+	</section>
+
 	<!-- Comparison tool -->
 	<section class="section glass-card">
 		<div class="card-header"><h2>⚔️ Model Comparison</h2></div>
 		<ComparisonTool {models} />
 	</section>
+
+	<!-- Model Detail Modal -->
+	{#if selectedModel}
+		<ModelDetailModal model={selectedModel} benchmarks={benchmarks} onClose={() => (selectedModel = null)} />
+	{/if}
 </main>
 
 <style>
@@ -141,6 +163,14 @@
 		text-align: center;
 	}
 
+	.card-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		flex-wrap: wrap;
+	}
+
 	.card-header h2 {
 		font-size: 1.3rem;
 		font-weight: 700;
@@ -212,5 +242,5 @@
 	:root.dark .comp-table-wrap { background: var(--card-bg); box-shadow: 0 2px 12px var(--shadow); }
 	:root.dark .comp-table thead th { background: rgba(255,255,255,0.05); color: var(--text); }
 
-	:root.dark .radar-plot h3 { color: var(--text); }
+	:root.dark .dd-selector select { background: var(--card-bg); color: var(--text); border-color: var(--border); }
 </style>
