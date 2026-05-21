@@ -226,12 +226,6 @@
 	}
 
 	/* Dark theme overrides for components */
-	:root.dark .lb-search { background: var(--card-bg); color: var(--text); border-color: var(--border); }
-	:root.dark .lb-filters select { background: var(--card-bg); color: var(--text); border-color: var(--border); }
-	:root.dark .lb-table-wrap { background: var(--card-bg); box-shadow: 0 2px 12px var(--shadow); }
-	:root.dark .lb-table thead th { background: rgba(255,255,255,0.05); color: var(--text); }
-	:root.dark .lb-sortable:hover { background: rgba(255,255,255,0.08); }
-	:root.dark .lb-row:hover { background: rgba(255,255,255,0.04); }
 
 	:root.dark .comp-table-wrap { background: var(--card-bg); box-shadow: 0 2px 12px var(--shadow); }
 	:root.dark .comp-table thead th { background: rgba(255,255,255,0.05); color: var(--text); }

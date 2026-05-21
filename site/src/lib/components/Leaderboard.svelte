@@ -139,6 +139,8 @@
 		font-size: 15px;
 		outline: none;
 		transition: border-color 0.2s, background 0.3s;
+		background: var(--card-bg);
+		color: var(--text);
 	}
 
 	.lb-search:focus {
@@ -152,7 +154,8 @@
 		border-radius: 8px;
 		font-size: 15px;
 		outline: none;
-		background: #fff;
+		background: var(--card-bg);
+		color: var(--text);
 		cursor: pointer;
 		transition: all 0.3s;
 	}
@@ -160,8 +163,8 @@
 	.lb-table-wrap {
 		overflow-x: auto;
 		border-radius: 12px;
-		box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-		background: #fff;
+		box-shadow: 0 2px 12px var(--shadow);
+		background: var(--card-bg);
 		transition: all 0.3s;
 	}
 
@@ -175,13 +178,14 @@
 	.lb-table td {
 		padding: 12px 16px;
 		text-align: left;
-		border-bottom: 1px solid #f0f0f0;
+		border-bottom: 1px solid var(--border);
+		color: var(--text);
 	}
 
 	.lb-table thead th {
-		background: #f8f9fa;
+		background: rgba(0, 0, 0, 0.04);
 		font-weight: 600;
-		color: #2d3436;
+		color: var(--text);
 		position: sticky;
 		top: 0;
 	}
@@ -193,25 +197,25 @@
 	}
 
 	.lb-sortable:hover {
-		background: #e9ecef;
+		background: rgba(0, 0, 0, 0.04);
 	}
 
 	.lb-arrow {
 		margin-left: 4px;
 		font-size: 12px;
-		color: #636e72;
+		color: var(--text-muted);
 	}
 
 	.lb-rank {
 		font-weight: 700;
-		color: #636e72;
+		color: var(--text-muted);
 		width: 50px;
 		text-align: center;
 	}
 
 	.lb-name {
 		font-weight: 600;
-		color: #2d3436;
+		color: var(--text);
 	}
 
 	.lb-score {
@@ -229,7 +233,7 @@
 	}
 
 	.lb-row:hover {
-		background: #f8f9fa;
+		background: rgba(0, 0, 0, 0.04);
 		transition: background 0.15s;
 	}
 
