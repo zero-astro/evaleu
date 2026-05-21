@@ -27,9 +27,9 @@
 	}
 
 	function getScoreColor(mean: number): string {
-		if (mean >= 0.7) return '#00b894';
-		if (mean >= 0.5) return '#e17055';
-		return '#636e72';
+		if (mean >= 0.55) return '#00b894';   // berdea = onenak
+		if (mean >= 0.40) return '#e17055';   // laranja = erdipurdikoak
+		return '#d63031';                      // gorria = txarrak
 	}
 
 	// Local reactive state for the leaderboard filters
@@ -111,6 +111,7 @@
 									style="width: {model.overallMean * 100}%; background: {getScoreColor(model.overallMean)};"
 								></div>
 							</div>
+							<span class="score-label">Top Performance</span>
 						</div>
 					</td>
 						<td>{model.params}</td>
@@ -234,11 +235,6 @@
 		color: var(--text);
 	}
 
-	.lb-score {
-		font-weight: 700;
-		font-variant-numeric: tabular-nums;
-	}
-
 	.score-cell {
 		display: flex;
 		align-items: center;
@@ -264,6 +260,16 @@
 		height: 100%;
 		border-radius: 4px;
 		transition: width 0.6s ease-out, background 0.3s;
+	}
+
+	.score-label {
+		font-size: 11px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		color: var(--text-muted);
+		white-space: nowrap;
+		min-width: fit-content;
 	}
 
 	.lb-badge {
