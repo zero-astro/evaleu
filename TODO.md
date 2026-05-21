@@ -46,12 +46,14 @@
   - [x] Ensure the build step reads `summary.json` → produces typed TS modules (`benchmarks.ts`, `models.ts`)
   - [x] Add npm script: `npm run build-data` to regenerate typed data from Python output
 
-- [ ] **Phase 3: Core components**
-  - [ ] `Leaderboard.svelte` — interactive table with sorting, filtering by family, search
-  - [ ] `ScoreBar.svelte` — animated bar chart showing overall accuracy (0 → value animation)
-  - [ ] `RadarPlot.svelte` — radar/spider chart per model using D3.js or Recharts
-  - [ ] `TimelineChart.svelte` — scatter plot of release date vs accuracy
-  - [ ] `ComparisonTool.svelte` — side-by-side comparison selector (pick 2-4 models)
+- [x] **Phase 3: Core components** ✅
+  - [x] `Leaderboard.svelte` — interactive table with sorting, filtering by family, search
+  - [x] `ScoreBar.svelte` — animated bar chart showing overall accuracy (0 → value animation)
+  - [x] `RadarPlot.svelte` — radar/spider chart per model using @nivo/radar
+  - [x] `TimelineChart.svelte` — custom SVG scatter plot of release date vs accuracy
+  - [x] `ComparisonTool.svelte` — side-by-side comparison selector (pick 2-4 models)
+  - [x] `+page.svelte` dashboard layout integrating all components
+  - [x] Build verified: `npm run build` → clean, no warnings
 
 - [ ] **Phase 4: UI/UX polish**
   - [ ] Dark/light mode toggle with localStorage persistence
