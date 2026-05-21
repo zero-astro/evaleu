@@ -63,14 +63,12 @@
   - [x] Responsive mobile-first layout (@media breakpoints)
   - [x] Gradient hero title, emoji section headers
 
-- [ ] **Phase 5: Build & deploy**
-  - [ ] Configure SvelteKit static export (`adapter-static`)
-  - [ ] Create GitHub Actions workflow:
-    - Step 1: Run `uv run evaleu.py eval --model <new-model>` (manual trigger, not auto)
-    - Step 2: Run `uv run evaleu.py summarize && uv run evaleu.py build`
-    - Step 3: Run `npm install && npm run build-data && npm run build`
-    - Step 4: Deploy to gh-pages
-  - [ ] Document the workflow in README.md
+- [x] **Phase 5: Build & deploy** ✅
+  - [x] Configure SvelteKit static export (`adapter-static`)
+  - [x] GitHub Actions workflow (`deploy-pages.yml`) — deploys `site/` to gh-pages on push to main
+    - No evaluation step in CI (evaluations run locally, then commit + push triggers deploy)
+    - Optionally rebuilds data from `summary.json` if present in repo
+  - [x] Document the workflow in README.md
 
 - [ ] **Phase 6: Advanced features (nice-to-have)**
   - [ ] CSV/JSON export of leaderboard data
