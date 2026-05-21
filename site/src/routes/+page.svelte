@@ -199,12 +199,6 @@
 		padding: 1.5rem;
 		box-shadow: 0 4px 24px var(--shadow);
 		border: 1px solid var(--border);
-		transition: all 0.3s ease;
-	}
-
-	.glass-card:hover {
-		box-shadow: 0 8px 32px var(--shadow-hover);
-		transform: translateY(-2px);
 	}
 
 	/* Light theme (default) */
