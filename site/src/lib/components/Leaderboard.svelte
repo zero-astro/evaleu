@@ -19,6 +19,7 @@
 	const columns: { key: keyof ModelRecord; label: string }[] = [
 		{ key: 'overallMean', label: 'Overall Mean' },
 		{ key: 'params', label: 'Params' },
+		{ key: 'weightsQuant', label: 'Quantization' },
 		{ key: 'family', label: 'Family' },
 	];
 
@@ -111,10 +112,10 @@
 									style="width: {model.overallMean * 100}%; background: {getScoreColor(model.overallMean)};"
 								></div>
 							</div>
-							<span class="score-label">Top Performance</span>
 						</div>
 					</td>
 						<td>{model.params}</td>
+						<td><span class="lb-badge lb-quant">{model.weightsQuant}</span></td>
 						<td>
 							<span
 								class="lb-badge"
@@ -279,6 +280,12 @@
 		font-size: 12px;
 		font-weight: 600;
 		white-space: nowrap;
+	}
+
+	.lb-quant {
+		background: rgba(9, 132, 227, 0.15);
+		color: var(--accent);
+		border: 1px solid var(--accent);
 	}
 
 	.lb-row:hover {
