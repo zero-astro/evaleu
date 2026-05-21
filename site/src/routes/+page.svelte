@@ -18,7 +18,27 @@
 	let selectedModel: typeof published[0] | null = $state(null);
 
 	onMount(() => {
-		try { isDark = localStorage.getItem('evaleu-theme') === 'dark'; } catch {}
+		try {
+			const stored = localStorage.getItem('evaleu-theme');
+			if (stored === 'dark') {
+				isDark = true;
+			} else if (stored === 'light') {
+				isDark = false;
+			} else {
+				// Auto-detect system preference on first visit
+				isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			}
+		} catch {}
+		document.documentElement.classList.toggle('dark', isDark);
+
+		// Listen for system theme changes while in auto mode
+		const mql = window.matchMedia('(prefers-color-scheme: dark)');
+		mql.addEventListener?.('change', (e) => {
+			if (!localStorage.getItem('evaleu-theme')) {
+				isDark = e.matches;
+				document.documentElement.classList.toggle('dark', isDark);
+			}
+		});
 	});
 
 	function toggleTheme() {
