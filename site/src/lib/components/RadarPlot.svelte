@@ -3,45 +3,6 @@
 
 	let { model }: { model: ModelRecord } = $props();
 
-	const cx = 240, cy = 200;
-	const maxR = 150;
-
-	function axisX(i: number) {
-		const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
-		return cx + maxR * Math.cos(angle);
-	}
-
-	function axisY(i: number) {
-		const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
-		return cy + maxR * Math.sin(angle);
-	}
-
-	function labelX(i: number) {
-		const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
-		return cx + (maxR + 30) * Math.cos(angle);
-	}
-
-	function labelY(i: number) {
-		const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
-		return cy + (maxR + 30) * Math.sin(angle);
-	}
-
-	function gridPoints(level: number) {
-		const r = (level / 100) * maxR;
-		return benchmarks.map((_, i) => {
-			const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
-			return `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)}`;
-		}).join(' ');
-	}
-
-	function dataPoints() {
-		return benchmarks.map((bench, i) => {
-			const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
-			const r = (bench.value / 100) * maxR;
-			return `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)}`;
-		}).join(' ');
-	}
-
 	const benchmarks = $derived(
 		Object.entries(model.benchmarkMeans).map(([key, value]) => ({
 			id: key.replace('BasqueGLUE_', '').replace('LatxaEval_', ''),
@@ -49,29 +10,72 @@
 		})),
 	);
 
-	const gridLevels = $derived([20, 40, 60, 80, 100]);
+	let chartDiv: HTMLDivElement | null = $state(null);
+	let plotlyInstance: any = $state(null);
+
+	$effect(() => {
+		if (!chartDiv || benchmarks.length === 0) return;
+
+		const labels = benchmarks.map((b) => b.id);
+		const values = benchmarks.map((b) => b.value);
+
+		const trace = {
+			type: 'scatterpolar',
+			r: values,
+			labels: labels,
+			fill: 'toself',
+			line: { color: '#0984e3', width: 2 },
+			fillcolor: 'rgba(9,132,227,0.2)',
+			marker: { size: 6, color: '#0984e3' },
+			hovertemplate: '<b>%{label}</b><br>Accuracy: %{r:.1f}%<extra></extra>',
+		};
+
+		const dark = document.documentElement.classList.contains('dark');
+
+		const layout = {
+			polar: {
+				radialaxis: {
+					tickfont: { color: dark ? '#b2bec3' : '#636e72', size: 10 },
+					range: [0, 100],
+					gridcolor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+				},
+				angularaxis: {
+					tickfont: { color: dark ? '#b2bec3' : '#636e72', size: 10 },
+					gridcolor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+				},
+			},
+			paper_bgcolor: dark ? '#1e1e32' : '#ffffff',
+			font: { color: dark ? '#dfe6e9' : '#2d3436', size: 11 },
+			margin: { l: 20, r: 20, t: 20, b: 20 },
+		};
+
+		const config = { responsive: true, displayModeBar: false };
+
+		import('plotly.js-dist-min').then((Plotly) => {
+			if (plotlyInstance) {
+				Plotly.react(chartDiv, [trace], layout, config);
+			} else {
+				Plotly.newPlot(chartDiv, [trace], layout, config).then((instance: any) => {
+					plotlyInstance = instance;
+				});
+			}
+		}).catch(() => {
+			console.warn('Plotly.js failed to load');
+		});
+
+		return () => {
+			if (chartDiv && plotlyInstance) {
+				import('plotly.js-dist-min').then((Plotly) => {
+					Plotly.purge(chartDiv);
+				}).catch(() => {});
+			}
+		};
+	});
 </script>
 
 <div class="radar-plot">
 	<h3>{model.displayName}</h3>
-	<svg viewBox="0 0 480 400" class="radar-svg">
-		<!-- Grid rings -->
-		{#each gridLevels as level}
-			<polygon points={gridPoints(level)} fill="none" stroke="var(--border)" stroke-width="0.5"/>
-		{/each}
-
-		{#each benchmarks as bench, i}
-			<!-- Axis line -->
-			<line x1={cx} y1={cy} x2={axisX(i)} y2={axisY(i)} stroke="var(--border)" stroke-width="0.5"/>
-			<!-- Label -->
-			<text x={labelX(i)} y={labelY(i)} text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-size="11">{bench.id}</text>
-			<!-- Data point -->
-			<circle cx={axisX(i)} cy={axisY(i)} r="5" fill="#0984e3"/>
-		{/each}
-
-		<!-- Filled area -->
-		<polygon points={dataPoints()} fill="#0984e3" fill-opacity="0.15" stroke="#0984e3" stroke-width="2"/>
-	</svg>
+	<div bind:this={chartDiv} class="plot-container"></div>
 </div>
 
 <style>
@@ -89,9 +93,10 @@
 		transition: color 0.3s;
 	}
 
-	.radar-svg {
+	.plot-container {
 		width: 100%;
 		max-width: 480px;
 		height: auto;
+		min-height: 280px;
 	}
 </style>
