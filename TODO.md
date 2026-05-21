@@ -40,11 +40,11 @@
   - [x] Add `.gitignore` entries for node_modules and build artifacts
   - [x] Build verified: `npm run build` → outputs to `build/`
 
-- [ ] **Phase 2: Data pipeline**
-  - [ ] Keep existing Python CLI (`evaleu.py`) — it generates `summary.json` and `data.json`
-  - [ ] Create a new Python script (or extend `build_site_data.py`) that outputs Svelte-compatible JSON
-  - [ ] Ensure the build step reads `summary.json` → produces `site/src/lib/data/summary.ts` (typed TS module)
-  - [ ] Add npm script: `npm run build-data` to regenerate typed data from Python output
+- [x] **Phase 2: Data pipeline** ✅
+  - [x] Keep existing Python CLI (`evaleu.py`) — it generates `summary.json` and `data.json`
+  - [x] Create a new Python script (`build_site_data.py`) that outputs Svelte-compatible JSON
+  - [x] Ensure the build step reads `summary.json` → produces typed TS modules (`benchmarks.ts`, `models.ts`)
+  - [x] Add npm script: `npm run build-data` to regenerate typed data from Python output
 
 - [ ] **Phase 3: Core components**
   - [ ] `Leaderboard.svelte` — interactive table with sorting, filtering by family, search
