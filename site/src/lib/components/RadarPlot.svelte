@@ -1,49 +1,77 @@
 <script lang="ts">
 	import type { ModelRecord } from '$lib/data/models';
-	import { Radar } from '@nivo/radar';
 
 	let { model }: { model: ModelRecord } = $props();
 
-	// Build radar data from benchmarkMeans
-	const radarData = $derived(
+	const cx = 240, cy = 200;
+	const maxR = 150;
+
+	function axisX(i: number) {
+		const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
+		return cx + maxR * Math.cos(angle);
+	}
+
+	function axisY(i: number) {
+		const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
+		return cy + maxR * Math.sin(angle);
+	}
+
+	function labelX(i: number) {
+		const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
+		return cx + (maxR + 30) * Math.cos(angle);
+	}
+
+	function labelY(i: number) {
+		const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
+		return cy + (maxR + 30) * Math.sin(angle);
+	}
+
+	function gridPoints(level: number) {
+		const r = (level / 100) * maxR;
+		return benchmarks.map((_, i) => {
+			const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
+			return `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)}`;
+		}).join(' ');
+	}
+
+	function dataPoints() {
+		return benchmarks.map((bench, i) => {
+			const angle = (i / benchmarks.length) * 2 * Math.PI - Math.PI / 2;
+			const r = (bench.value / 100) * maxR;
+			return `${cx + r * Math.cos(angle)},${cy + r * Math.sin(angle)}`;
+		}).join(' ');
+	}
+
+	const benchmarks = $derived(
 		Object.entries(model.benchmarkMeans).map(([key, value]) => ({
 			id: key.replace('BasqueGLUE_', '').replace('LatxaEval_', ''),
 			value: Math.round(value * 100),
 		})),
 	);
 
-	const colors = ['#636e72', '#0984e3'];
+	const gridLevels = $derived([20, 40, 60, 80, 100]);
 </script>
 
 <div class="radar-plot">
 	<h3>{model.displayName}</h3>
-	<Radar
-		data={[{ id: model.displayName, data: radarData }]}
-		keys={['value']}
-		indexBy="id"
-		valueFormat={(v: number) => `${v}%`}
-		colors={colors}
-		fillOpacity={0.15}
-		borderWidth={2}
-		pointRadius={6}
-		pointColor="#fff"
-		pointBorderColor={{ from: 'color', modifiers: [['darker', 0.3]] }}
-		gridLabelOffset={18}
-		ticksOffsetX={0}
-		ticksOffsetY={0}
-		axisLabelsOffset={14}
-		dimensionLabelsOffset={20}
-		sliceLabelsRotation={-45}
-		isInteractive
-		enableDotsBorder={false}
-		width={480}
-		height={400}
-		margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-		theme={{
-			textStyle: { fill: 'var(--text)', fontSize: '12px' },
-			background: 'transparent',
-		}}
-	/>
+	<svg viewBox="0 0 480 400" class="radar-svg">
+		<!-- Grid rings -->
+		{#each gridLevels as level}
+			<polygon points={gridPoints(level)} fill="none" stroke="var(--border)" stroke-width="0.5"/>
+		{/each}
+
+		{#each benchmarks as bench, i}
+			<!-- Axis line -->
+			<line x1={cx} y1={cy} x2={axisX(i)} y2={axisY(i)} stroke="var(--border)" stroke-width="0.5"/>
+			<!-- Label -->
+			<text x={labelX(i)} y={labelY(i)} text-anchor="middle" dominant-baseline="central" fill="var(--text)" font-size="11">{bench.id}</text>
+			<!-- Data point -->
+			<circle cx={axisX(i)} cy={axisY(i)} r="5" fill="#0984e3"/>
+		{/each}
+
+		<!-- Filled area -->
+		<polygon points={dataPoints()} fill="#0984e3" fill-opacity="0.15" stroke="#0984e3" stroke-width="2"/>
+	</svg>
 </div>
 
 <style>
@@ -59,5 +87,11 @@
 		color: var(--text);
 		text-align: center;
 		transition: color 0.3s;
+	}
+
+	.radar-svg {
+		width: 100%;
+		max-width: 480px;
+		height: auto;
 	}
 </style>
