@@ -101,3 +101,28 @@
   - [x] Per-benchmark drill-down view (`BenchmarkDrilldown.svelte`)
   - [x] Model detail modal with metadata and release info (`ModelDetailModal.svelte`)
   - [x] All 73 tests passing (Vitest unit + data integrity)
+
+## Theme Selector & i18n
+
+- [ ] **Phase 8: Three-button theme selector**
+  - [ ] Replace single toggle button with three buttons: Auto / Dark / Light
+  - [ ] Active mode visually highlighted (border, background, or icon fill)
+  - [ ] Persist selection in localStorage (`evaleu-theme-mode`)
+  - [ ] Auto mode respects system `prefers-color-scheme` and reacts to changes
+  - [ ] Update `+page.svelte` header with new selector UI
+  - [ ] Ensure MutationObserver in TimelineChart still works with theme changes
+
+- [ ] **Phase 9: i18n (Basque / English)**
+  - [ ] Create translations store (`src/lib/i18n.ts`) with `eu` and `en` keys
+  - [ ] Add language selector (EU / EN) to header alongside theme buttons
+  - [ ] Persist language in localStorage (`evaleu-lang`)
+  - [ ] Replace all hardcoded text strings across components:
+    - [ ] `+page.svelte` — hero subtitle, section titles
+    - [ ] `Leaderboard.svelte` — column headers, search placeholder, filter labels, row hint
+    - [ ] `ComparisonTool.svelte` — selection hints, table headers
+    - [ ] `ModelDetailModal.svelte` — metadata labels, modal title, close button
+    - [ ] `ExportButton.svelte` — export button labels
+    - [ ] `TimelineChart.svelte` — chart title, axis labels, legend
+    - [ ] `RadarPlot.svelte` — chart title
+  - [ ] Update svelte-head `<title>` dynamically based on language
+  - [ ] Test both languages render correctly in all components
