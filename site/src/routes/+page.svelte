@@ -63,6 +63,12 @@
 		<Leaderboard {models} {benchmarks} onModelClick={handleModelClick} />
 	</section>
 
+	<!-- Comparison tool -->
+	<section class="section glass-card">
+		<div class="card-header"><h2>⚔️ Model Comparison</h2></div>
+		<ComparisonTool {models} />
+	</section>
+
 	<!-- Radar + Timeline side by side -->
 	<section class="section glass-card">
 		<div class="card-header"><h2>📊 Benchmark Breakdown &amp; Trends</h2></div>
@@ -78,12 +84,6 @@
 	<section class="section glass-card">
 		<div class="card-header"><h2>🔍 Per-Benchmark Drill-Down</h2></div>
 		<BenchmarkDrilldown {models} {benchmarks} />
-	</section>
-
-	<!-- Comparison tool -->
-	<section class="section glass-card">
-		<div class="card-header"><h2>⚔️ Model Comparison</h2></div>
-		<ComparisonTool {models} />
 	</section>
 
 	<!-- Model Detail Modal -->
