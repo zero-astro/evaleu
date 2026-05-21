@@ -77,6 +77,7 @@
 			<thead>
 				<tr>
 					<th>#</th>
+					<th>Name</th>
 					{#each columns as col}
 						<th
 							class="lb-sortable"
