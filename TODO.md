@@ -104,13 +104,13 @@
 
 ## Theme Selector & i18n
 
-- [ ] **Phase 8: Three-button theme selector**
-  - [ ] Replace single toggle button with three buttons: Auto / Dark / Light
-  - [ ] Active mode visually highlighted (border, background, or icon fill)
-  - [ ] Persist selection in localStorage (`evaleu-theme-mode`)
-  - [ ] Auto mode respects system `prefers-color-scheme` and reacts to changes
-  - [ ] Update `+page.svelte` header with new selector UI
-  - [ ] Ensure MutationObserver in TimelineChart still works with theme changes
+- [x] **Phase 8: Three-button theme selector** ✅
+  - [x] Replace single toggle button with three buttons: Auto / Dark / Light
+  - [x] Active mode visually highlighted (border, background, or icon fill)
+  - [x] Persist selection in localStorage (`evaleu-theme-mode`)
+  - [x] Auto mode respects system `prefers-color-scheme` and reacts to changes
+  - [x] Update `+page.svelte` header with new selector UI
+  - [x] Ensure MutationObserver in TimelineChart still works with theme changes
 
 - [ ] **Phase 9: i18n (Basque / English)**
   - [ ] Create translations store (`src/lib/i18n.ts`) with `eu` and `en` keys

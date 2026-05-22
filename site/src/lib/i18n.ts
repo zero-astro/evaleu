@@ -1,7 +1,6 @@
-import { writable } from 'svelte/store';
-
 export type Language = 'eu' | 'en';
 
+// Translation dictionary
 const translations: Record<string, Partial<Record<Language, string>>> = {
 	// +page.svelte
 	'title': { eu: 'Evaleu — Ebaluazioa LLM Euskal Herriko', en: 'Evaleu — Basque LLM Evaluation Dashboard' },
@@ -23,10 +22,9 @@ const translations: Record<string, Partial<Record<Language, string>>> = {
 	'row_hint': { eu: 'models erakusten · Egin klik xehetasunetarako', en: 'models shown · Click a row for details' },
 
 	// ComparisonTool.svelte
+	'compare_models': { eu: 'Konparatu Modeloak', en: 'Compare Models' },
 	'select_models': { eu: 'Aukeratu 2–4 modelo konparatzeko', en: 'Select 2–4 models to compare' },
 	'more_needed': { eu: 'Hautatu gutxienez beste modelo bat konpara dezazun.', en: 'Select at least one more model to compare.' },
-	'overall_mean_col': { eu: 'Bataz Besteko Orora', en: 'Overall Mean' },
-	'total_benchmarks': { eu: 'Benchmark guztiak', en: 'Total Benchmarks' },
 
 	// ModelDetailModal.svelte
 	'modal_close': { eu: 'Itxi', en: 'Close' },
@@ -47,7 +45,7 @@ const translations: Record<string, Partial<Record<Language, string>>> = {
 	'export_json': { eu: '📋 JSON', en: '📋 JSON' },
 
 	// TimelineChart.svelte
-	'timeline_title': { eu: 'Argitaratze Data vs Akurtua', en: 'Release Date vs Accuracy' },
+	'timeline_title': { eu: 'Argitaratze Data vs Akurturia', en: 'Release Date vs Accuracy' },
 	'date_label': { eu: 'Argitaratze data', en: 'Release Date' },
 	'acc_label': { eu: 'Akurturia (%)', en: 'Accuracy (%)' },
 
@@ -68,65 +66,70 @@ export function t(key: string, lang: Language): string {
 	return translations[key]?.[lang] ?? key;
 }
 
-// Theme mode store
+// Theme mode type and state
 export type ThemeMode = 'auto' | 'dark' | 'light';
 
 function getSystemDark(): boolean {
-	try {
-		return window.matchMedia('(prefers-color-scheme: dark)').matches;
-	} catch {
-		return false;
-	}
+	try { return window.matchMedia('(prefers-color-scheme: dark)').matches; } catch { return false; }
 }
 
-function applyTheme(mode: ThemeMode): void {
+let _themeMode: ThemeMode = 'auto';
+const _subscribers: Set<() => void> = new Set();
+
+export function getThemeMode(): ThemeMode { return _themeMode; }
+
+export function setThemeMode(mode: ThemeMode): void {
+	_themeMode = mode;
 	const isDark = mode === 'dark' ? true : mode === 'light' ? false : getSystemDark();
 	document.documentElement.classList.toggle('dark', isDark);
 	try { localStorage.setItem('evaleu-theme-mode', mode); } catch {}
+	for (const fn of _subscribers) fn();
 }
 
-export const themeMode = writable<ThemeMode>(() => {
-	try {
-		const stored = localStorage.getItem('evaleu-theme-mode');
-		if (stored === 'auto' || stored === 'dark' || stored === 'light') return stored;
-	} catch {}
-	return 'auto';
-});
+export function subscribe(fn: () => void): () => void {
+	_subscribers.add(fn);
+	return () => { _subscribers.delete(fn); };
+}
 
-themeMode.subscribe((mode) => applyTheme(mode));
+// Language state
+let _language: Language = 'en';
 
-// Listen for system theme changes when in auto mode
-window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', (e) => {
-	themeMode.update((mode) => {
-		if (mode === 'auto') {
-			applyTheme('auto');
-		}
-		return mode;
-	});
-});
+export function getLanguage(): Language { return _language; }
 
-// Language store
-export const language = writable<Language>(() => {
-	try {
-		const stored = localStorage.getItem('evaleu-lang');
-		if (stored === 'eu' || stored === 'en') return stored;
-	} catch {}
-	const navLang = navigator.language?.toLowerCase();
-	return navLang?.startsWith('eu') ? 'eu' : 'en';
-});
-
-language.subscribe((lang) => {
+export function setLanguage(lang: Language): void {
+	_language = lang;
 	try { localStorage.setItem('evaleu-lang', lang); } catch {}
 	document.documentElement.setAttribute('data-lang', lang);
-});
+	for (const fn of _subscribers) fn();
+}
 
-// Initialize language on document
-try {
-	const stored = localStorage.getItem('evaleu-lang');
-	if (stored === 'eu' || stored === 'en') {
-		document.documentElement.setAttribute('data-lang', stored);
-	} else {
-		const navLang = navigator.language?.toLowerCase();
-		document.documentElement.setAttribute('data-lang', navLang?.startsWith('eu') ? 'eu' : 'en');
-	}
-} catch {}
+// Initialize from localStorage on load
+function init() {
+	try {
+		const theme = localStorage.getItem('evaleu-theme-mode');
+		if (theme === 'auto' || theme === 'dark' || theme === 'light') {
+			_themeMode = theme;
+		}
+		const lang = localStorage.getItem('evaleu-lang');
+		if (lang === 'eu' || lang === 'en') {
+			_language = lang;
+		} else {
+			const navLang = navigator.language?.toLowerCase();
+			_language = navLang?.startsWith('eu') ? 'eu' : 'en';
+		}
+		document.documentElement.setAttribute('data-lang', _language);
+
+		// Apply theme on init
+		const isDark = _themeMode === 'dark' ? true : _themeMode === 'light' ? false : getSystemDark();
+		document.documentElement.classList.toggle('dark', isDark);
+	} catch {}
+
+	window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => {
+		if (_themeMode === 'auto') {
+			const isDark = getSystemDark();
+			document.documentElement.classList.toggle('dark', isDark);
+		}
+	});
+}
+
+init();
