@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ModelRecord } from '$lib/data/models';
+	import { t, lang } from '$lib/i18n';
 
 	let { model }: { model: ModelRecord | null } = $props();
 
@@ -22,33 +23,33 @@
 			<!-- Header -->
 			<div class="modal-header">
 				<h2>{model.displayName}</h2>
-				<button class="close-btn" onclick={() => model = null} aria-label="Close">&times;</button>
+				<button class="close-btn" onclick={() => model = null} aria-label={t('modal_close', $lang)}>&times;</button>
 			</div>
 
 			<!-- Metadata grid -->
 			<dl class="meta-grid">
 				<div class="meta-item">
-					<dt>Family</dt>
+					<dt>{t('meta_family', $lang)}</dt>
 					<dd><span class="badge" style="background: var(--family-color, #636E72); color: #fff;">{model.family}</span></dd>
 				</div>
 				<div class="meta-item">
-					<dt>Parameters</dt>
+					<dt>{t('meta_params', $lang)}</dt>
 					<dd>{model.params}</dd>
 				</div>
 				<div class="meta-item">
-					<dt>Weights / Quant</dt>
+					<dt>{t('meta_weights_quant', $lang)}</dt>
 					<dd>{model.weightsQuant}</dd>
 				</div>
 				<div class="meta-item">
-					<dt>KV Cache</dt>
+					<dt>{t('meta_kv_cache', $lang)}</dt>
 					<dd>{model.kvCache}</dd>
 				</div>
 				<div class="meta-item">
-					<dt>Release Date</dt>
+					<dt>{t('meta_release_date', $lang)}</dt>
 					<dd>{formatDate(model.releaseDateUtc)}</dd>
 				</div>
 				<div class="meta-item">
-					<dt>HuggingFace</dt>
+					<dt>{t('meta_hf', $lang)}</dt>
 					<dd>
 						{#if model.releaseSourceUrl}
 							<a href={model.releaseSourceUrl} target="_blank" rel="noopener">{model.upstreamModelId}</a>
@@ -60,18 +61,18 @@
 			</dl>
 
 			<!-- Overall scores -->
-			<h3 class="section-title">📊 Scores</h3>
+			<h3 class="section-title">{t('scores_section', $lang)}</h3>
 			<div class="score-row">
-				<span class="label">Overall Mean:</span>
+				<span class="label">{t('scores_overall_mean_label', $lang)}</span>
 				<span class="value highlight">{formatPercent(model.overallMean)}</span>
 			</div>
 			<div class="score-row">
-				<span class="label">Std Dev:</span>
+				<span class="label">{t('scores_std_dev_label', $lang)}</span>
 				<span class="value">{formatPercent(model.overallStd)}</span>
 			</div>
 
 			<!-- Benchmark breakdown -->
-			<h3 class="section-title">📋 Benchmark Breakdown</h3>
+			<h3 class="section-title">{t('breakdown_title', $lang)}</h3>
 			<div class="bench-list">
 				{#each Object.entries(model.benchmarkMeans).sort((a, b) => b[1] - a[1]) as [name, value]}
 					<div class="bench-item">
@@ -85,11 +86,11 @@
 			</div>
 
 			<!-- Runs table -->
-			<h3 class="section-title">🔄 Seed Runs</h3>
+			<h3 class="section-title">{t('runs_title', $lang)}</h3>
 			<div class="runs-table-wrap">
 				<table class="runs-table">
 					<thead>
-						<tr><th>Seed</th><th>Overall</th></tr>
+						<tr><th>{t('seed_col', $lang)}</th><th>{t('runs_overall_col', $lang)}</th></tr>
 					</thead>
 					<tbody>
 						{#each model.runs as run}

@@ -3,6 +3,7 @@
 	import type { BenchmarkInfo } from '$lib/benchmarks';
 	import { filterStore, applyFilter, initUrlSync, applyFiltersToModels } from '$lib/state/url-sync';
 	import { onMount } from 'svelte';
+	import { t, lang } from '$lib/i18n';
 
 	let { models, benchmarks, onModelClick }: { models: ModelRecord[]; benchmarks: BenchmarkInfo[]; onModelClick?: (model: ModelRecord) => void } = $props();
 	onModelClick ||= () => {};
@@ -16,11 +17,11 @@
 		'Qwen 3.6': '#D63031',
 	};
 
-	const columns: { key: keyof ModelRecord; label: string }[] = [
-		{ key: 'overallMean', label: 'Overall Mean' },
-		{ key: 'params', label: 'Params' },
-		{ key: 'weightsQuant', label: 'Quantization' },
-		{ key: 'family', label: 'Family' },
+	const columns: { key: keyof ModelRecord; labelKey: string }[] = [
+		{ key: 'overallMean', labelKey: 'overall_mean' },
+		{ key: 'params', labelKey: 'params_label' },
+		{ key: 'weightsQuant', labelKey: 'quantization' },
+		{ key: 'family', labelKey: 'family_label' },
 	];
 
 	function formatPercent(val: number) {
@@ -67,13 +68,13 @@
 		<input
 			type="text"
 			class="lb-search"
-			placeholder="Search models..."
+			placeholder={t('search_placeholder', $lang)}
 			value={f.search}
 			oninput={(e) => handleSearch((e.target as HTMLInputElement).value)}
 		/>
 		<select value={f.familyFilter} onchange={(e) => handleFamily((e.target as HTMLSelectElement).value)}>
 			{#each ['all', ...Array.from(new Set(models.map((m) => m.family)))] as ff}
-				<option value={ff}>{ff === 'all' ? 'All Families' : ff}</option>
+				<option value={ff}>{ff === 'all' ? t('all_families', $lang) : ff}</option>
 			{/each}
 		</select>
 	</div>
@@ -83,14 +84,14 @@
 		<table class="lb-table">
 			<thead>
 				<tr>
-					<th>#</th>
-					<th>Name</th>
+					<th>{t('rank_column', $lang)}</th>
+					<th>{t('name_column', $lang)}</th>
 					{#each columns as col}
 						<th
 							class="lb-sortable"
 							onclick={() => handleSort(col.key)}
 						>
-							{col.label}
+							{t(col.labelKey, $lang)}
 							<span class="lb-arrow">
 								{f.sortKey === String(col.key) ? (f.sortDir === 'asc' ? '▲' : '▼') : ''}
 							</span>
@@ -131,7 +132,7 @@
 	</div>
 
 	<!-- Row count hint -->
-	<p class="lb-hint">{sorted.length} models shown · Click a row for details</p>
+	<p class="lb-hint">{sorted.length} {t('row_hint', $lang)}</p>
 </div>
 
 <style>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ModelRecord } from '$lib/data/models';
+	import { t, lang } from '$lib/i18n';
 
 	let { models }: { models: ModelRecord[] } = $props();
 
@@ -49,8 +50,8 @@
 </script>
 
 <div class="comparison-tool">
-	<h3>Compare Models</h3>
-	<p class="comp-hint">Select 2–4 models to compare</p>
+	<h3>{t('compare_models', $lang)}</h3>
+	<p class="comp-hint">{t('select_models', $lang)}</p>
 
 	<!-- Model selector -->
 	<div class="comp-selectors">
@@ -72,7 +73,7 @@
 			<table class="comp-table">
 				<thead>
 					<tr>
-						<th>Benchmark</th>
+						<th>{t('benchmark_col', $lang)}</th>
 						{#each selectedModels as model}
 							<th>{model.displayName}</th>
 						{/each}
@@ -81,7 +82,7 @@
 				<tbody>
 					<!-- Overall mean row -->
 					<tr class="comp-row comp-overall">
-						<td><strong>Overall Mean</strong></td>
+						<td><strong>{t('overall_mean_comp', $lang)}</strong></td>
 						{#each selectedModels as model}
 							<td class="comp-cell">{formatPercent(model.overallMean)}</td>
 						{/each}
@@ -105,7 +106,7 @@
 			</table>
 		</div>
 	{:else if selectedModels.length === 1}
-		<p class="comp-empty">Select at least one more model to compare.</p>
+		<p class="comp-empty">{t('more_needed', $lang)}</p>
 	{/if}
 </div>
 

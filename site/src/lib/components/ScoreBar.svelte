@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ModelRecord } from '$lib/data/models';
+	import { t, lang } from '$lib/i18n';
 
 	let { model }: { model: ModelRecord } = $props();
 
@@ -9,15 +10,15 @@
 		return '#d63031'; // red
 	}
 
-	function getTierLabel(mean: number): string {
-		if (mean >= 0.7) return 'Excellent';
-		if (mean >= 0.5) return 'Good';
-		return 'Needs Work';
+	function getTierKey(mean: number): string {
+		if (mean >= 0.7) return 'tier_excellent';
+		if (mean >= 0.5) return 'tier_good';
+		return 'tier_needs_work';
 	}
 
 	const pct = $derived(model.overallMean * 100);
 	const color = $derived(getTierColor(model.overallMean));
-	const label = $derived(getTierLabel(model.overallMean));
+	const tierKey = $derived(getTierKey(model.overallMean));
 </script>
 
 <div class="score-bar">
@@ -32,7 +33,7 @@
 			aria-label={`${model.displayName}: ${pct.toFixed(1)}%`}
 		></div>
 	</div>
-	<span class="sb-tier">{label}</span>
+	<span class="sb-tier">{t(tierKey, $lang)}</span>
 </div>
 
 <style>

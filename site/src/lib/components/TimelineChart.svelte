@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import type { ModelRecord } from '$lib/data/models';
+	import { t, lang } from '$lib/i18n';
 
 	let { models }: { models: ModelRecord[] } = $props();
 
@@ -45,7 +46,7 @@
 			return {
 				x: points.map((p) => new Date(p.x)),
 				y: points.map((p) => p.y),
-				text: points.map((p) => `${p.label}<br>Accuracy: ${p.y}%`),
+				text: points.map((p) => t('timeline_hover', $lang, { label: p.label, value: String(p.y) })),
 				mode: 'markers',
 				marker: {
 					size: 12,
@@ -60,13 +61,13 @@
 
 		const layout = {
 			xaxis: {
-				title: { text: 'Release Date', standoff: 10 },
+				title: { text: t('timeline_x_label', $lang), standoff: 10 },
 				type: 'date',
 				gridcolor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
 				tickfont: { color: dark ? '#b2bec3' : '#636e72', size: 11 },
 			},
 			yaxis: {
-				title: { text: 'Accuracy (%)' },
+				title: { text: t('timeline_y_label', $lang) },
 				range: [40, 100],
 				gridcolor: dark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
 				tickfont: { color: dark ? '#b2bec3' : '#636e72', size: 11 },
@@ -133,7 +134,7 @@
 </script>
 
 <div class="timeline-chart">
-	<h3>Release Date vs Accuracy</h3>
+	<h3>{t('timeline_chart_title', $lang)}</h3>
 	<div bind:this={chartDiv} class="plot-container"></div>
 </div>
 

@@ -8,6 +8,7 @@
 	import ExportButton from '$lib/components/ExportButton.svelte';
 	import ModelDetailModal from '$lib/components/ModelDetailModal.svelte';
 	import { onMount } from 'svelte';
+	import { t, lang, type Language, setLanguage } from '$lib/i18n';
 
 	const published = models.filter((m) => m.siteVisibility === 'published');
 	const topModel = [...published].sort((a, b) => b.overallMean - a.overallMean)[0];
@@ -51,25 +52,31 @@
 </script>
 
 <svelte:head>
-	<title>Evaleu — Basque LLM Evaluation</title>
+	<title>{t('title', $lang)}</title>
 </svelte:head>
 
 <main class="page">
 	<!-- Header -->
 	<header class="hero glass">
-		<!-- Theme selector: Auto / Dark / Light -->
-		<div class="theme-selector" role="group" aria-label="Theme selection">
-			<button class="theme-btn {themeMode === 'auto' ? 'active' : ''}" onclick={() => setTheme('auto')} title="Automatikoa">🌗</button>
-			<button class="theme-btn {themeMode === 'dark' ? 'active' : ''}" onclick={() => setTheme('dark')} title="Iluna">🌙</button>
-			<button class="theme-btn {themeMode === 'light' ? 'active' : ''}" onclick={() => setTheme('light')} title="Argia">☀️</button>
+		<!-- Language + Theme selector -->
+		<div class="top-controls">
+			<div class="lang-selector" role="group" aria-label="Language selection">
+				<button class="lang-btn {($lang) === 'eu' ? 'active' : ''}" onclick={() => setLanguage('eu')}>EU</button>
+				<button class="lang-btn {($lang) === 'en' ? 'active' : ''}" onclick={() => setLanguage('en')}>EN</button>
+			</div>
+			<div class="theme-selector" role="group" aria-label="Theme selection">
+				<button class="theme-btn {themeMode === 'auto' ? 'active' : ''}" onclick={() => setTheme('auto')} title={t('theme_auto', $lang)}>🌗</button>
+				<button class="theme-btn {themeMode === 'dark' ? 'active' : ''}" onclick={() => setTheme('dark')} title={t('theme_dark', $lang)}>🌙</button>
+				<button class="theme-btn {themeMode === 'light' ? 'active' : ''}" onclick={() => setTheme('light')} title={t('theme_light', $lang)}>☀️</button>
+			</div>
 		</div>
 		<h1>Evaleu</h1>
-		<p class="hero-sub">Basque LLM Evaluation Dashboard</p>
+		<p class="hero-sub">{t('hero_sub', $lang)}</p>
 	</header>
 
 	<!-- Top model score bar -->
 	<section class="section section-center glass-card">
-		<h2>⭐ Top Performer</h2>
+		<h2>{t('top_performer', $lang)}</h2>
 		{#if topModel}
 			<ScoreBar model={topModel} />
 		{/if}
@@ -78,7 +85,7 @@
 	<!-- Leaderboard -->
 	<section class="section glass-card">
 		<div class="card-header">
-			<h2>🏆 Leaderboard</h2>
+			<h2>{t('leaderboard_title', $lang)}</h2>
 			<ExportButton {models} />
 		</div>
 		<Leaderboard {models} {benchmarks} onModelClick={handleModelClick} />
@@ -86,13 +93,13 @@
 
 	<!-- Evolution over time -->
 	<section class="section glass-card">
-		<div class="card-header"><h2>📈 Evolution Over Time</h2></div>
+		<div class="card-header"><h2>{t('evolution_title', $lang)}</h2></div>
 		<TimelineChart models={published} />
 	</section>
 
 	<!-- Comparison tool -->
 	<section class="section glass-card">
-		<div class="card-header"><h2>⚔️ Model Comparison</h2></div>
+		<div class="card-header"><h2>{t('comparison_title', $lang)}</h2></div>
 		<ComparisonTool {models} />
 	</section>
 
@@ -125,16 +132,52 @@
 		position: relative;
 	}
 
-	.theme-selector {
+	.top-controls {
 		position: absolute;
 		top: 1rem;
 		right: 1.5rem;
 		display: flex;
 		gap: 4px;
+		align-items: center;
 		background: var(--card-bg);
 		border: 2px solid var(--border);
 		border-radius: 8px;
 		padding: 4px;
+	}
+
+	.lang-selector {
+		display: flex;
+		gap: 2px;
+		margin-right: 4px;
+		padding-right: 4px;
+		border-right: 1px solid var(--border);
+	}
+
+	.lang-btn {
+		background: none;
+		border: none;
+		font-size: 0.85rem;
+		font-weight: 700;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: all 0.2s ease;
+		width: 30px;
+		height: 36px;
+		border-radius: 6px;
+		color: var(--text-muted);
+	}
+
+	.lang-btn.active {
+		background: var(--accent);
+		color: #fff;
+		box-shadow: 0 2px 8px var(--shadow-hover);
+	}
+
+	.theme-selector {
+		display: flex;
+		gap: 4px;
 	}
 
 	.theme-btn {
@@ -204,7 +247,8 @@
 
 	@media (max-width: 640px) {
 		.hero h1 { font-size: 2rem; }
-		.theme-selector { top: 0.5rem; right: 0.5rem; gap: 2px; padding: 3px; }
+		.top-controls { top: 0.5rem; right: 0.5rem; gap: 2px; padding: 3px; flex-direction: column; align-items: stretch; }
+		.lang-selector { margin-right: 0; padding-right: 0; border-right: none; margin-bottom: 2px; }
 		.theme-btn { width: 32px; height: 32px; font-size: 1rem; }
 	}
 

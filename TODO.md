@@ -112,17 +112,17 @@
   - [x] Update `+page.svelte` header with new selector UI
   - [x] Ensure MutationObserver in TimelineChart still works with theme changes
 
-- [ ] **Phase 9: i18n (Basque / English)**
-  - [ ] Create translations store (`src/lib/i18n.ts`) with `eu` and `en` keys
-  - [ ] Add language selector (EU / EN) to header alongside theme buttons
-  - [ ] Persist language in localStorage (`evaleu-lang`)
-  - [ ] Replace all hardcoded text strings across components:
-    - [ ] `+page.svelte` — hero subtitle, section titles
-    - [ ] `Leaderboard.svelte` — column headers, search placeholder, filter labels, row hint
-    - [ ] `ComparisonTool.svelte` — selection hints, table headers
-    - [ ] `ModelDetailModal.svelte` — metadata labels, modal title, close button
-    - [ ] `ExportButton.svelte` — export button labels
-    - [ ] `TimelineChart.svelte` — chart title, axis labels, legend
-    - [ ] `RadarPlot.svelte` — chart title
-  - [ ] Update svelte-head `<title>` dynamically based on language
-  - [ ] Test both languages render correctly in all components
+- [x] **Phase 9: i18n (Basque / English)** ✅
+  - [x] Create translations store (`src/lib/i18n.ts`) with `eu` and `en` keys
+  - [x] Add language selector (EU / EN) to header alongside theme buttons
+  - [x] Persist language in localStorage (`evaleu-lang`)
+  - [x] Replace all hardcoded text strings across components:
+    - [x] `+page.svelte` — hero subtitle, section titles
+    - [x] `Leaderboard.svelte` — column headers, search placeholder, filter labels, row hint
+    - [x] `ComparisonTool.svelte` — selection hints, table headers ("Benchmark")
+    - [x] `ModelDetailModal.svelte` — metadata labels, modal title, close button
+    - [x] `ExportButton.svelte` — export button labels (already emoji-only)
+    - [x] `TimelineChart.svelte` — chart title, axis labels, hover template
+    - [x] `RadarPlot.svelte` — hover template with Plotly placeholder safety
+  - [x] Update svelte-head `<title>` dynamically based on language
+  - [x] Test both languages render correctly in all components

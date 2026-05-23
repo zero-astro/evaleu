@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ModelRecord } from '$lib/data/models';
+	import { i18n } from '$lib/i18n';
 
 	let { model }: { model: ModelRecord } = $props();
 
@@ -27,7 +28,7 @@
 			line: { color: '#0984e3', width: 2 },
 			fillcolor: 'rgba(9,132,227,0.2)',
 			marker: { size: 6, color: '#0984e3' },
-			hovertemplate: '<b>%{label}</b><br>Accuracy: %{r:.1f}%<extra></extra>',
+			hovertemplate: i18n['radar_hover']?.[$lang] ?? '<b>%{label}</b><br>Accuracy: %{r:.1f}%<extra></extra>',
 		};
 
 		const dark = document.documentElement.classList.contains('dark');
